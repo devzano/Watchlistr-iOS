@@ -1,0 +1,421 @@
+{
+  "page": 1,
+  "results": [
+    {
+      "adult": false,
+      "backdrop_path": "/qaSEDEZz9XlhCPXluSW6YoS8dZW.jpg",
+      "genre_ids": [
+        16,
+        10759,
+        10765
+      ],
+      "id": 10223,
+      "origin_country": [
+        "US"
+      ],
+      "original_language": "en",
+      "original_name": "Superman",
+      "overview": "Superman is a 1988 animated Saturday morning television series produced by Ruby-Spears Productions and Warner Bros. Television that aired on CBS featuring the DC Comics superhero of the same name. Veteran comic book writer Marv Wolfman was the head story editor, and noted comic book artist Gil Kane provided character designs.",
+      "popularity": 11.025,
+      "poster_path": "/tdQIW7xaVILssmXGnH6QBlIqKKU.jpg",
+      "first_air_date": "1988-09-17",
+      "name": "Superman",
+      "vote_average": 6,
+      "vote_count": 10
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/qO8uNvhYrBRKKWZLUdHrvwuuQpG.jpg",
+      "genre_ids": [
+        10765,
+        18
+      ],
+      "id": 95057,
+      "origin_country": [
+        "US"
+      ],
+      "original_language": "en",
+      "original_name": "Superman & Lois",
+      "overview": "After years of facing megalomaniacal supervillains, monsters wreaking havoc on Metropolis, and alien invaders intent on wiping out the human race, The Man of Steel aka Clark Kent and Lois Lane come face to face with one of their greatest challenges ever: dealing with all the stress, pressures and complexities that come with being working parents in today's society.",
+      "popularity": 199.524,
+      "poster_path": "/qJ6ndkbqgqS1n7ETi0YHhcjASym.jpg",
+      "first_air_date": "2021-02-23",
+      "name": "Superman & Lois",
+      "vote_average": 8.097,
+      "vote_count": 1942
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/4P2gbaCGdZyP4i95TmmA6nS9HJh.jpg",
+      "genre_ids": [
+        10764
+      ],
+      "id": 64356,
+      "origin_country": [
+        "KR"
+      ],
+      "original_language": "ko",
+      "original_name": "슈퍼맨이 돌아왔다",
+      "overview": "An up-close look at celebrity dads who have to take care of their kids for the next 48 hours without any help. Will it be a dad-tastrophe, or can they finish their wives' to-do lists while having fun with their kids?",
+      "popularity": 69.256,
+      "poster_path": "/qjBx2RCnyyBPgu9qBV7j3UiXjeo.jpg",
+      "first_air_date": "2013-11-03",
+      "name": "The Return of Superman",
+      "vote_average": 8.3,
+      "vote_count": 10
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/ebDi6FNKlDJqAzzaTtBxoX68Lbz.jpg",
+      "genre_ids": [
+        10759,
+        18,
+        10765
+      ],
+      "id": 4515,
+      "origin_country": [
+        "US"
+      ],
+      "original_language": "en",
+      "original_name": "Lois & Clark: The New Adventures of Superman",
+      "overview": "A much more lavish version of the popular Superman television series which had first aired forty years earlier, Lois & Clark focused more on the Man of Steel's early adult years in Metropolis. With the unknowing help of Lois Lane, Clark Kent created Superman there in Metropolis after finding work at the world-famous Daily Planet newspaper, where he meets fellow reporter Lois Lane.",
+      "popularity": 49.143,
+      "poster_path": "/1LbPs6i1h4BKjVUwK5S9GjPCydi.jpg",
+      "first_air_date": "1993-09-12",
+      "name": "Lois & Clark: The New Adventures of Superman",
+      "vote_average": 7.097,
+      "vote_count": 354
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/yDsLb8WRHplh7X5EpHDFHl7TP8T.jpg",
+      "genre_ids": [
+        16,
+        10759,
+        10765
+      ],
+      "id": 4303,
+      "origin_country": [
+        "US"
+      ],
+      "original_language": "en",
+      "original_name": "Superman: The Animated Series",
+      "overview": "Superman, an incredibly powerful alien from the planet Krypton, defends Metropolis from supercriminals. Superman hides his identity behind the glasses of Clark Kent; a mild-mannered reporter for the newspaper the Daily Planet. At the Daily Planet Superman works with fellow reporter Lois Lane and photographer Jimmy Olsen.",
+      "popularity": 38.07,
+      "poster_path": "/7lhG7XSz0VkbUtXoXtUVdjDrUx6.jpg",
+      "first_air_date": "1996-09-06",
+      "name": "Superman: The Animated Series",
+      "vote_average": 7.638,
+      "vote_count": 258
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/6jb5IcgZKh0BxJVd0Y5iLgktuS1.jpg",
+      "genre_ids": [],
+      "id": 83983,
+      "origin_country": [
+        "TH"
+      ],
+      "original_language": "en",
+      "original_name": "The Return of Superman Thailand",
+      "overview": "The Return of Superman Thailand",
+      "popularity": 0.657,
+      "poster_path": "/tv91rOhQ7eTkjgW1kl5r2Qw8riK.jpg",
+      "first_air_date": "2017-03-25",
+      "name": "The Return of Superman Thailand",
+      "vote_average": 9,
+      "vote_count": 2
+    },
+    {
+      "adult": false,
+      "backdrop_path": null,
+      "genre_ids": [
+        10765,
+        10759,
+        35
+      ],
+      "id": 29955,
+      "origin_country": [
+        "JP"
+      ],
+      "original_language": "ja",
+      "original_name": "ミュータント タートルズ 超人伝説編",
+      "overview": "When the Teenage Mutant Ninja Turtles acquire Mutastones from Crys-Mu, the spirit of light, they acquire the ability to enhance themselves into Super Turtles for a duration of three minutes. Meanwhile, the evil Shredder and his minions Bebop and Rocksteady stumble upon the Dark Mutastone, which transforms them into Devil Shredder, Supermutant Bebop and Supermutant Rocksteady, respectively. But the Turtles have one more trick up their shells: all four of them can combine into their ultimate form—Turtle Saint.",
+      "popularity": 2.318,
+      "poster_path": "/tUAkpZfNYlDctO0QzpvUofihFoo.jpg",
+      "first_air_date": "1996-05-21",
+      "name": "Teenage Mutant Ninja Turtles: SuperMan Legend",
+      "vote_average": 10,
+      "vote_count": 1
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/mnK6gfA3nzoIkFDLkazL3p0OE8d.jpg",
+      "genre_ids": [
+        10759,
+        10765,
+        18,
+        35,
+        10751
+      ],
+      "id": 12662,
+      "origin_country": [
+        "US"
+      ],
+      "original_language": "en",
+      "original_name": "Adventures of Superman",
+      "overview": "Announcer: \"The Adventures of Superman.  Faster than a speeding bullet!  More powerful than a locomotive!  Able to leap tall buildings at a single bound!\"\n\nVoices: \"Look up in the sky!  It's a bird!  It's a plane!  It's Superman!\"\n\nAnnouncer: \"Yes, it's Superman, strange visitor from another planet who came to Earth with powers and abilities far beyond those of mortal men. Superman, who can change the course of mighty rivers, bend steel in his bare hands; and who, disguised as Clark Kent, mild-mannered reporter for a great metropolitan newspaper, fights a never ending battle for truth, justice, and the American way.\"",
+      "popularity": 17.393,
+      "poster_path": "/3eKmwXE2A394l3GB9eIOy7kYm25.jpg",
+      "first_air_date": "1952-09-19",
+      "name": "Adventures of Superman",
+      "vote_average": 6.602,
+      "vote_count": 44
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/mFmnafGVdxH2HuWiDZVGkur0Olj.jpg",
+      "genre_ids": [
+        35,
+        16
+      ],
+      "id": 63214,
+      "origin_country": [
+        "US"
+      ],
+      "original_language": "en",
+      "original_name": "Supermansion",
+      "overview": "Aging superhero, Titanium Rex, and his has-been team known as The League of Freedom struggle to stay relevant in a changing world.",
+      "popularity": 5.479,
+      "poster_path": "/Mv6oIo8bkWATYpZUzzvxT63Qyl.jpg",
+      "first_air_date": "2015-10-08",
+      "name": "Supermansion",
+      "vote_average": 6.85,
+      "vote_count": 10
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/zHWyPOl2YC2t6LVYzsP34ukigGe.jpg",
+      "genre_ids": [
+        16
+      ],
+      "id": 10786,
+      "origin_country": [
+        "US"
+      ],
+      "original_language": "en",
+      "original_name": "The New Adventures of Superman",
+      "overview": "The New Adventures of Superman is a series of six-minute animated Superman adventures produced by Filmation that were broadcast on CBS between 1966 and 1970. The 68 segments appeared as part of three different programs during that time, packaged with similar shorts featuring The Adventures of Superboy and other DC Comics superheroes.",
+      "popularity": 8.421,
+      "poster_path": "/53JEt9Irq5DM3auywXqAsyJLSyG.jpg",
+      "first_air_date": "1966-09-10",
+      "name": "The New Adventures of Superman",
+      "vote_average": 6.1,
+      "vote_count": 11
+    },
+    {
+      "adult": false,
+      "backdrop_path": null,
+      "genre_ids": [
+        16
+      ],
+      "id": 3014,
+      "origin_country": [
+        "US"
+      ],
+      "original_language": "en",
+      "original_name": "The Superman/Aquaman Hour of Adventure",
+      "overview": "The Superman/Aquaman Hour of Adventure is a Filmation animated series that aired on CBS from 1967 to 1968. Premiering on September 9, 1967, this 60-minute program included a series of six-minute adventures featuring various DC Comics superheroes.",
+      "popularity": 1.895,
+      "poster_path": "/mBI2RCuFRmLZFupMRdsFyYG8zFA.jpg",
+      "first_air_date": "1967-09-09",
+      "name": "The Superman/Aquaman Hour of Adventure",
+      "vote_average": 6.7,
+      "vote_count": 3
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/fGp8o18B6DihHjTmIjou0SgTMI8.jpg",
+      "genre_ids": [
+        16,
+        10765,
+        10759
+      ],
+      "id": 125928,
+      "origin_country": [
+        "US"
+      ],
+      "original_language": "en",
+      "original_name": "My Adventures with Superman",
+      "overview": "Clark Kent builds his secret Superman identity and embraces his role as the hero of Metropolis — and perhaps the world. Lois, now growing into a star investigative journalist, takes aspiring photographer Jimmy Olsen under her wing. All the while, Clark and Lois are falling in love, sharing adventures, taking down bad guys, stumbling over secrets, and discovering what it means to be Superman and Lois Lane.",
+      "popularity": 0.926,
+      "poster_path": "/VVQex9l1oDcUEoatcNulDkJoUH.jpg",
+      "first_air_date": "",
+      "name": "My Adventures with Superman",
+      "vote_average": 0,
+      "vote_count": 0
+    },
+    {
+      "adult": false,
+      "backdrop_path": null,
+      "genre_ids": [
+        10765,
+        16
+      ],
+      "id": 79203,
+      "origin_country": [
+        "US"
+      ],
+      "original_language": "en",
+      "original_name": "Superman: Red Son",
+      "overview": "Motion comics adaptation of the Superman: Red Son comic book that place Superman and his nefarious villains in the Soviet Union.",
+      "popularity": 1.252,
+      "poster_path": "/A4wFzBj7axZI2x5rmx0Gpf5izDg.jpg",
+      "first_air_date": "2009-07-24",
+      "name": "Superman: Red Son",
+      "vote_average": 8.2,
+      "vote_count": 4
+    },
+    {
+      "adult": false,
+      "backdrop_path": null,
+      "genre_ids": [],
+      "id": 30278,
+      "origin_country": [
+        "US"
+      ],
+      "original_language": "en",
+      "original_name": "Supermanny",
+      "overview": "",
+      "popularity": 0.6,
+      "poster_path": null,
+      "first_air_date": "2009-11-14",
+      "name": "Supermanny",
+      "vote_average": 0,
+      "vote_count": 0
+    },
+    {
+      "adult": false,
+      "backdrop_path": null,
+      "genre_ids": [
+        16
+      ],
+      "id": 19579,
+      "origin_country": [
+        "US"
+      ],
+      "original_language": "en",
+      "original_name": "The Superman/Batman Adventures",
+      "overview": "The Superman/Batman Adventures was a television series that aired on USA Network in 1995. It was later aired on Cartoon Network and Boomerang. The series featured edited episodes of various seasons of the Super Friends, as well The New Adventures of Superman, The Superman/Aquaman Hour of Adventure, and The Batman/Superman Hour. This show is noteworthy since it featured the 1983 episodes of the Super Friends for the first time on American television.",
+      "popularity": 0.84,
+      "poster_path": null,
+      "first_air_date": "",
+      "name": "The Superman/Batman Adventures",
+      "vote_average": 0,
+      "vote_count": 0
+    },
+    {
+      "adult": false,
+      "backdrop_path": null,
+      "genre_ids": [],
+      "id": 42101,
+      "origin_country": [],
+      "original_language": "en",
+      "original_name": "Superman On Trial",
+      "overview": "Superman On Trial To celebrate the 50th anniversary of Superman the BBC produced a docudrama about Metropolis’ superhero. This story was partly based on Superman: Last Son of Krypton and some early issues of Adventures of Superman. The BBC released an Audiobook production in 2010.",
+      "popularity": 0.6,
+      "poster_path": null,
+      "first_air_date": "",
+      "name": "Superman On Trial",
+      "vote_average": 0,
+      "vote_count": 0
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/bSlMLaYgS74HthHmKHKrlttosPR.jpg",
+      "genre_ids": [
+        16,
+        10759
+      ],
+      "id": 31749,
+      "origin_country": [
+        "US"
+      ],
+      "original_language": "en",
+      "original_name": "The Adventures of Batman",
+      "overview": "The adventures of Batman, with Robin, the Boy Wonder! Batman and Robin, the Dynamic Duo against crime and corruption, whose real identities as millionaire philanthropist Bruce Wayne and his young ward Dick Grayson and known only to Alfred, the faithful butler. Ever alert, they respond swiftly to a signal from the police, and moments later, from the secret Batcave deep beneath Wayne Manor, they roar out to protect life, limb and property as Batman and Robin, caped crimefighters! Batman and Robin, scourge of Gotham City's kooky criminals: The Joker, Clown Prince of Crime - The Penguin, pudgy purveyor of perfidy - and the cool, cruel, Mr. Freeze! Watch out, villains, here come... Batman and Robin!",
+      "popularity": 10.01,
+      "poster_path": "/2ivr9EEA9ZGKGXiM7EStE0pJSFR.jpg",
+      "first_air_date": "1968-09-14",
+      "name": "The Adventures of Batman",
+      "vote_average": 7.214,
+      "vote_count": 28
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/tvkOl4zBqf5EkoSPH3TZUEFTZmH.jpg",
+      "genre_ids": [
+        10759,
+        18,
+        10765
+      ],
+      "id": 4532,
+      "origin_country": [
+        "US"
+      ],
+      "original_language": "en",
+      "original_name": "Superboy",
+      "overview": "Superboy is a half-hour live-action television series based on Kal-El's early years as Superboy. It depicted Superboy's adventures during his college years, his meetings with Lex Luthor and his romance with Lana Lang. The series was brought to the screen by executive producers Ilya and Alexander Salkind, who were the producers of the first three Superman movies and the 1984 Supergirl movie.",
+      "popularity": 10.658,
+      "poster_path": "/g8QxvkOSGiGRk0nW6U8QLX0Y8NV.jpg",
+      "first_air_date": "1988-10-08",
+      "name": "Superboy",
+      "vote_average": 6.353,
+      "vote_count": 17
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/eMbc9l2FJl6c5zsY6I3EsK7DoVR.jpg",
+      "genre_ids": [
+        10759,
+        18,
+        10765
+      ],
+      "id": 19832,
+      "origin_country": [
+        "JP"
+      ],
+      "original_language": "ja",
+      "original_name": "電光超人グリッドマン",
+      "overview": "Three computer-savvy kids, Naoto, Yuka and Ippei created their own videogame superhero, but then discover it possessed by an inter-dimensional police officer, Gridman. Pursuing an evil program called Kahn Digifer, he merges with Naoto and fights Kahn Digifer's digitized monsters in order to prevent the computerized demon from wreaking havoc on the Human World.",
+      "popularity": 3.303,
+      "poster_path": "/vRniFBk511MMObToRvoj7VPBFYq.jpg",
+      "first_air_date": "1993-04-03",
+      "name": "Gridman the Hyper Agent",
+      "vote_average": 8,
+      "vote_count": 2
+    },
+    {
+      "adult": false,
+      "backdrop_path": null,
+      "genre_ids": [
+        16
+      ],
+      "id": 25895,
+      "origin_country": [
+        "US"
+      ],
+      "original_language": "en",
+      "original_name": "Super Friends",
+      "overview": "Super Friends first aired on ABC on September 8, 1973, featuring well-known DC characters Superman, Batman and Robin, Wonder Woman, and Aquaman as part of its Saturday morning cartoon lineup. It was produced by Hanna-Barbera and was based on the Justice League of America (JLA) and associated comic book characters published by DC Comics. The name of the program (and the JLA members featured with the Super Friends) have been variously represented (as Super Friends and Challenge of the Super Friends, for example) at different points in its broadcast history.",
+      "popularity": 3.161,
+      "poster_path": "/ftKarhxw86BwQR1gYKdhTB8REAz.jpg",
+      "first_air_date": "1980-09-06",
+      "name": "Super Friends",
+      "vote_average": 6.7,
+      "vote_count": 6
+    }
+  ],
+  "total_pages": 1,
+  "total_results": 20
+}
