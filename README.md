@@ -5,22 +5,22 @@
   <p align="center">
     <table>
       <tr>
-        <td align="center"><img src="./Screenshots/Watchlistr (LoginView).png" alt="Watchlistr " width="300"></td>
-        <td align="center"><img src="./Screenshots/Watchlistr (MovieTab).png" alt="Watchlistr " width="300"></td>
-        <td align="center"><img src="./Screenshots/Watchlistr (TVTab).png" alt="Watchlistr " width="300"></td>
-        <td align="center"><img src="./Screenshots/Watchlistr (ProfileTab).png" alt="Watchlistr " width="300"></td>
+        <td align="center"><img src="./Screenshots/Watchlistr (LoginView).png" alt="Watchlistr Login View" width="300"></td>
+        <td align="center"><img src="./Screenshots/Watchlistr (MovieTab).png" alt="Watchlistr Movie Tab" width="300"></td>
+        <td align="center"><img src="./Screenshots/Watchlistr (TVShowTab).png" alt="Watchlistr TV Tab" width="300"></td>
+        <td align="center"><img src="./Screenshots/Watchlistr (ProfileTab).png" alt="Watchlistr Profile Tab" width="300"></td>
       </tr>
       <tr>
-        <td align="center"><img src="./Screenshots/Watchlistr (BlankMovieSearch).png" alt="Watchlistr " width="300"></td>
-        <td align="center"><img src="./Screenshots/Watchlistr (MovieSearch).png" alt="Watchlistr " width="300"></td>
-        <td align="center"><img src="./Screenshots/Watchlistr (MovieDetails).png" alt="Watchlistr " width="300"></td>
-       <td align="center"><img src="./Screenshots/Watchlistr (MovieWatchlist).png" alt="Watchlistr " width="300"></td>
+        <td align="center"><img src="./Screenshots/Watchlistr (BlankMovieSearch).png" alt="Watchlistr Blank Movie Search" width="300"></td>
+        <td align="center"><img src="./Screenshots/Watchlistr (MovieSearchResults).png" alt="Watchlistr Movie Search Results" width="300"></td>
+        <td align="center"><img src="./Screenshots/Watchlistr (MovieDetails).png" alt="Watchlistr Movie Detail View" width="300"></td>
+        <td align="center"><img src="./Screenshots/Watchlistr (MovieWatchlist).png" alt="Watchlistr Movie Watchlist" width="300"></td>
       </tr>
       <tr>
-        <td align="center"><img src="./Screenshots/Watchlistr (BlankTVSearch).png" alt="Watchlistr " width="300"></td>
-        <td align="center"><img src="./Screenshots/Watchlistr (TVSearch).png" alt="Watchlistr " width="300"></td>
-        <td align="center"><img src="./Screenshots/Watchlistr (TVDetails).png" alt="Watchlistr " width="300"></td>
-        <td align="center"><img src="./Screenshots/Watchlistr (TVWatchlist).png" alt="Watchlistr " width="300"></td>
+        <td align="center"><img src="./Screenshots/Watchlistr (BlankTVShowSearch).png" alt="Watchlistr Blank TV Show Search" width="300"></td>
+        <td align="center"><img src="./Screenshots/Watchlistr (TVShowSearchResults).png" alt="Watchlistr TV Show Search Results" width="300"></td>
+        <td align="center"><img src="./Screenshots/Watchlistr (TVShowDetails).png" alt="Watchlistr TV Show Detail View" width="300"></td>
+        <td align="center"><img src="./Screenshots/Watchlistr (TVShowWatchlist).png" alt="Watchlistr TV Show Watchlist" width="300"></td>
       </tr>
     </table>
   </p>
