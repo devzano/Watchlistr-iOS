@@ -5,22 +5,22 @@
   <p align="center">
     <table>
       <tr>
-        <td align="center"><img src="./Screenshots/LoginView.png" alt="Watchlistr " width="300"></td>
-        <td align="center"><img src="./Screenshots/MovieTab.png" alt="Watchlistr " width="300"></td>
-        <td align="center"><img src="./Screenshots/TVTab.png" alt="Watchlistr " width="300"></td>
-        <td align="center"><img src="./Screenshots/ProfileTab.png" alt="Watchlistr " width="300"></td>
+        <td align="center"><img src="./Screenshots/Watchlistr (LoginView).png" alt="Watchlistr " width="300"></td>
+        <td align="center"><img src="./Screenshots/Watchlistr (MovieTab).png" alt="Watchlistr " width="300"></td>
+        <td align="center"><img src="./Screenshots/Watchlistr (TVTab).png" alt="Watchlistr " width="300"></td>
+        <td align="center"><img src="./Screenshots/Watchlistr (ProfileTab).png" alt="Watchlistr " width="300"></td>
       </tr>
       <tr>
-        <td align="center"><img src="./Screenshots/BlankMovieSearch.png" alt="Watchlistr " width="300"></td>
-        <td align="center"><img src="./Screenshots/MovieSearch.png" alt="Watchlistr " width="300"></td>
-        <td align="center"><img src="./Screenshots/MovieDetails.png" alt="Watchlistr " width="300"></td>
-       <td align="center"><img src="./Screenshots/MovieWatchlist.png" alt="Watchlistr " width="300"></td>
+        <td align="center"><img src="./Screenshots/Watchlistr (BlankMovieSearch).png" alt="Watchlistr " width="300"></td>
+        <td align="center"><img src="./Screenshots/Watchlistr (MovieSearch).png" alt="Watchlistr " width="300"></td>
+        <td align="center"><img src="./Screenshots/Watchlistr (MovieDetails).png" alt="Watchlistr " width="300"></td>
+       <td align="center"><img src="./Screenshots/Watchlistr (MovieWatchlist).png" alt="Watchlistr " width="300"></td>
       </tr>
       <tr>
-        <td align="center"><img src="./Screenshots/BlankTVSearch.png" alt="Watchlistr " width="300"></td>
-        <td align="center"><img src="./Screenshots/TVSearch.png" alt="Watchlistr " width="300"></td>
-        <td align="center"><img src="./Screenshots/TVDetails.png" alt="Watchlistr " width="300"></td>
-        <td align="center"><img src="./Screenshots/TVWatchlist.png" alt="Watchlistr " width="300"></td>
+        <td align="center"><img src="./Screenshots/Watchlistr (BlankTVSearch).png" alt="Watchlistr " width="300"></td>
+        <td align="center"><img src="./Screenshots/Watchlistr (TVSearch).png" alt="Watchlistr " width="300"></td>
+        <td align="center"><img src="./Screenshots/Watchlistr (TVDetails).png" alt="Watchlistr " width="300"></td>
+        <td align="center"><img src="./Screenshots/Watchlistr (TVWatchlist).png" alt="Watchlistr " width="300"></td>
       </tr>
     </table>
   </p>
@@ -48,7 +48,7 @@ Contributions to Watchlistr are welcome! If you have any feature suggestions, bu
 Copyright © 2023 devzano. All rights reserved.
 
 ##### Credits
-<small><a href="https://firebase.google.com/">Firebase</a>></small>
+<small><a href="https://firebase.google.com/">Firebase</a></small>
 <br>
 <small><a href="https://developer.themoviedb.org/docs">TMDB</a></small>
 <br>
