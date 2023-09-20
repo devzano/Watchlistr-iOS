@@ -2,7 +2,7 @@
 //  DataFetchPhaseOverlayView.swift
 //  Watchlistr
 //
-//  Created by Ruben Manzano on 5/20/23.
+//  Created by Ruben Manzano on 8/14/23.
 //
 
 import SwiftUI
@@ -19,7 +19,7 @@ struct DataFetchPhaseOverlayView<V: EmptyData>: View {
     var body: some View {
         switch phase {
         case .empty:
-            ProgressView()
+            ActivityIndicatorView()
         case .success(let value) where value.isEmpty:
             EmptyPlaceholderView(text: "No Data", image: Image(systemName: "film"))
         case .failure(let error):

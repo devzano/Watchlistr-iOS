@@ -2,7 +2,7 @@
 //  WatchlistrStore.swift
 //  Watchlistr
 //
-//  Created by Ruben Manzano on 6/9/23.
+//  Created by Ruben Manzano on 8/14/23.
 //
 
 import Foundation
@@ -54,6 +54,13 @@ class MovieStore: MovieService {
         return movieResponse.results
     }
 
+    func fetchMovieWatchProviders(forMovie movieID: Int) async throws -> WatchProvidersResponse {
+        guard let url = URL(string: "\(baseAPIURL)/movie/\(movieID)/watch/providers") else {
+            throw MovieError.invalidEndpoint
+        }
+        
+        return try await self.loadURLAndDecode(url: url)
+    }
     private func loadURLAndDecode<D: Decodable>(url: URL, params: [String: String]? = nil) async throws -> D {
         guard var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
             throw MovieError.invalidEndpoint
@@ -128,6 +135,14 @@ class TVShowStore: TVShowService {
         ])
         
         return tvshowResponse.results
+    }
+    
+    func fetchWatchProviders(forTVShow tvShowID: Int, wpSeason: Int) async throws -> WatchProvidersResponse {
+        guard let url = URL(string: "\(baseAPIURL)/tv/\(tvShowID)/season/\(wpSeason)/watch/providers") else {
+            throw TVShowError.invalidEndpoint
+        }
+        
+        return try await self.loadURLAndDecode(url: url)
     }
     
     private func loadURLAndDecode<D: Decodable>(url: URL, params: [String: String]? = nil) async throws -> D {

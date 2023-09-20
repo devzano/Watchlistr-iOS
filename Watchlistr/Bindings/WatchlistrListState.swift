@@ -2,7 +2,7 @@
 //  WatchlistrListState.swift
 //  Watchlistr
 //
-//  Created by Ruben Manzano on 6/9/23.
+//  Created by Ruben Manzano on 8/14/23.
 //
 
 import SwiftUI

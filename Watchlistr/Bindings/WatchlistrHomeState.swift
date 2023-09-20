@@ -2,7 +2,7 @@
 //  WatchlistrHomeState.swift
 //  Watchlistr
 //
-//  Created by Ruben Manzano on 6/9/23.
+//  Created by Ruben Manzano on 8/14/23.
 //
 
 import Foundation
@@ -175,11 +175,11 @@ fileprivate extension TVShowListEndpoint {
         switch self {
         case .airingToday:
             return 0
-        case .topRated:
-            return 1
-        case .popular:
-            return 2
         case .onTheAir:
+            return 1
+        case .topRated:
+            return 2
+        case .popular:
             return 3
         }
     }

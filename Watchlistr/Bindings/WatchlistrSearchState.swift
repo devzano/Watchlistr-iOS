@@ -2,7 +2,7 @@
 //  WatchlistrSearchState.swift
 //  Watchlistr
 //
-//  Created by Ruben Manzano on 6/9/23.
+//  Created by Ruben Manzano on 8/14/23.
 //
 
 import SwiftUI
@@ -12,7 +12,6 @@ import Foundation
 //MovieSearchState
 @MainActor
 class MovieSearchState: ObservableObject {
-    
     @Published var query = ""
     @Published private(set) var phase: DataFetchPhase<[Movie]> = .empty
     
@@ -85,18 +84,18 @@ class TVShowSearchState: ObservableObject {
     @Published private(set) var phase: DataFetchPhase<[TVShow]> = .empty
     
     private var cancellables = Set<AnyCancellable>()
-    private let tvshowService: TVShowService
+    private let tvShowService: TVShowService
     
     var trimmedQuery: String {
         query.trimmingCharacters(in: .whitespacesAndNewlines)
     }
     
-    var tvshows: [TVShow] {
+    var tvShows: [TVShow] {
         phase.value ?? []
     }
     
-    init(tvshowService: TVShowService = TVShowStore.shared) {
-        self.tvshowService = tvshowService
+    init(tvShowService: TVShowService = TVShowStore.shared) {
+        self.tvShowService = tvShowService
     }
     
     func startObserve() {
@@ -133,10 +132,10 @@ class TVShowSearchState: ObservableObject {
         }
         
         do {
-            let tvshows = try await tvshowService.searchTVShow(query: trimmedQuery)
+            let tvShows = try await tvShowService.searchTVShow(query: trimmedQuery)
             if Task.isCancelled { return }
             guard trimmedQuery == self.trimmedQuery else { return }
-            phase = .success(tvshows)
+            phase = .success(tvShows)
         } catch {
             if Task.isCancelled { return }
             guard trimmedQuery == self.trimmedQuery else { return }

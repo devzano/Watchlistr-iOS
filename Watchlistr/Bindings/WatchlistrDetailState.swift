@@ -2,7 +2,7 @@
 //  WatchlistrDetailState.swift
 //  Watchlistr
 //
-//  Created by Ruben Manzano on 6/9/23.
+//  Created by Ruben Manzano on 8/14/23.
 //
 
 import SwiftUI
@@ -12,6 +12,7 @@ import SwiftUI
 class MovieDetailState: ObservableObject {
     private let movieService: MovieService
     @Published private(set) var phase: DataFetchPhase<Movie?> = .empty
+
     var movie: Movie? {
         phase.value ?? nil
     }
@@ -34,17 +35,43 @@ class MovieDetailState: ObservableObject {
     }
 }
 
+@MainActor
+class MovieWatchProvidersState: ObservableObject {
+    @Published var movieWatchProviders: WatchProvidersResponse?
+    @Published var phase: DataFetchPhase = .empty
+    
+    enum DataFetchPhase {
+        case empty
+        case loading
+        case success
+        case failure
+    }
+    
+    func loadMovieWatchProviders(forMovie movieID: Int) async {
+        self.phase = .loading
+        
+        do {
+            let providers = try await MovieStore.shared.fetchMovieWatchProviders(forMovie: movieID)
+            self.movieWatchProviders = providers
+            self.phase = .success
+        } catch {
+            self.phase = .failure
+        }
+    }
+}
+
 //TVShowDetailState
 @MainActor
 class TVShowDetailState: ObservableObject {
-    private let tvshowService: TVShowService
+    private let tvShowService: TVShowService
     @Published private(set) var phase: DataFetchPhase<TVShow?> = .empty
-    var tvshow: TVShow? {
+    
+    var tvShow: TVShow? {
         phase.value ?? nil
     }
     
     init(tvshowService: TVShowService = TVShowStore.shared) {
-        self.tvshowService = tvshowService
+        self.tvShowService = tvshowService
     }
     
     func loadTVShow(id: Int) async {
@@ -53,10 +80,35 @@ class TVShowDetailState: ObservableObject {
         phase = .empty
         
         do {
-            let tvshow = try await self.tvshowService.fetchTVShow(id: id)
+            let tvshow = try await self.tvShowService.fetchTVShow(id: id)
             phase = .success(tvshow)
         } catch {
             phase = .failure(error)
+        }
+    }
+}
+
+@MainActor
+class TVShowWatchProvidersState: ObservableObject {
+    @Published var tvShowWatchProviders: WatchProvidersResponse?
+    @Published var phase: DataFetchPhase = .empty
+    
+    enum DataFetchPhase {
+        case empty
+        case loading
+        case success
+        case failure
+    }
+    
+    func loadTVShowWatchProviders(forTVShow tvShowID: Int, wpSeason: Int) async {
+        self.phase = .loading
+
+        do {
+            let providers = try await TVShowStore.shared.fetchWatchProviders(forTVShow: tvShowID, wpSeason: 1)
+            self.tvShowWatchProviders = providers
+            self.phase = .success
+        } catch {
+            self.phase = .failure
         }
     }
 }
