@@ -7,7 +7,7 @@
       <tr>
         <td align="center"><img src="./Screenshots/Watchlistr (LoginView).png" alt="Watchlistr Login View" width="300"></td>
         <td align="center"><img src="./Screenshots/Watchlistr (MovieTab).png" alt="Watchlistr Movie Tab" width="300"></td>
-        <td align="center"><img src="./Screenshots/Watchlistr (TVShowTab).png" alt="Watchlistr TV Tab" width="300"></td>
+        <td align="center"><img src="./Screenshots/Watchlistr (TVShowTab).png" alt="Watchlistr TV Show Tab" width="300"></td>
         <td align="center"><img src="./Screenshots/Watchlistr (ProfileTab).png" alt="Watchlistr Profile Tab" width="300"></td>
       </tr>
       <tr>
