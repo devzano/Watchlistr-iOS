@@ -8,7 +8,6 @@
 import Foundation
 
 enum DataFetchPhase<V> {
-    
     case empty
     case loading
     case success(V)

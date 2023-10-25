@@ -75,7 +75,7 @@ struct TVShowSearchView: View {
         List {
             ForEach(tvshowSearchState.tvShows) { tvshow in
                 NavigationLink(destination: TVShowDetailView(tvShowID: tvshow.id, tvShowName: tvshow.name)) {
-                    TVShowRowView(tvshow: tvshow).padding(.vertical, 8)
+                    TVShowRowView(tvShow: tvshow).padding(.vertical, 8)
                 }
             }
         }
@@ -108,19 +108,19 @@ struct TVShowSearchView: View {
 }
 
 struct TVShowRowView: View {
-    let tvshow: TVShow
+    let tvShow: TVShow
 
     var body: some View {
         HStack(alignment: .top, spacing: 16) {
-            TVShowThumbnailView(tvShow: tvshow, thumbnailType: .poster(showName: false))
+            TVShowThumbnailView(tvShow: tvShow, thumbnailType: .poster(showName: false))
                 .frame(width: 61, height: 92)
             VStack(alignment: .leading) {
-                Text(tvshow.name)
+                Text(tvShow.name)
                     .font(.headline)
                     .foregroundColor(.blue)
-                if !tvshow.ratingText.isEmpty {
+                if !tvShow.ratingText.isEmpty {
                     HStack {
-                        Text(tvshow.ratingText)
+                        Text(tvShow.ratingText)
                             .font(.system(size: 16, weight: .bold))
                             .foregroundColor(.white)
                             .padding(.horizontal, 10)
@@ -131,12 +131,12 @@ struct TVShowRowView: View {
                             .cornerRadius(10)
                             .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
                         
-                        Text(tvshow.airText)
+                        Text(tvShow.airText)
                             .font(.subheadline)
                             .foregroundColor(.blue)
                     }
                 }
-                Text(tvshow.overview)
+                Text(tvShow.overview)
                     .font(.subheadline)
                     .lineLimit(3)
             }

@@ -29,7 +29,7 @@ struct TVShow: Decodable, Identifiable, Hashable {
     let voteCount: Int
     let episodeRunTime: [Int]?
     let firstAirDate: String?
-    
+    let seasons: [TVShowSeason]?
     let genres: [TVShowGenre]?
     let credits: TVShowCredit?
     let videos: TVShowVideoResponse?
@@ -57,14 +57,13 @@ struct TVShow: Decodable, Identifiable, Hashable {
     
     var genreText: String {
         guard let genres = genres, !genres.isEmpty else {
-            return "n/a"
+            return ""
         }
         
         let genreNames = genres.map { $0.name }
         return genreNames.joined(separator: ", ")
     }
 
-    
     var ratingText: String {
         let rating = Int(voteAverage)
         let ratingText = (0..<rating).reduce("") {(acc, _) -> String in
@@ -72,24 +71,24 @@ struct TVShow: Decodable, Identifiable, Hashable {
         }
         return ratingText
     }
-    
+
     var scoreText: String {
         guard ratingText.count > 0 else {
-            return "n/a"
+            return ""
         }
         return "\(ratingText.count)/10"
     }
-    
+
     var airText: String {
-        guard let airDate = self.firstAirDate, let date = Utils.dateFormatter.date(from: airDate) else {
-            return "n/a"
+        guard let airDate = self.firstAirDate, let date = DateUtils.dateFormatter.date(from: airDate) else {
+            return ""
         }
         return TVShow.yearFormatter.string(from: date)
     }
     
     var durationText: String {
         guard let episodeRunTimes = self.episodeRunTime, !episodeRunTimes.isEmpty else {
-            return "n/a"
+            return ""
         }
         
         let durations = episodeRunTimes.compactMap { duration -> String? in
@@ -122,6 +121,63 @@ struct TVShow: Decodable, Identifiable, Hashable {
     var youtubeTrailers: [TVShowVideo]? {
         videos?.results.filter {$0.youtubeURL != nil}
     }
+}
+
+struct TVShowSeriesImages: Decodable {
+    let backdrops: [ImageDetail]?
+    let posters: [ImageDetail]?
+    
+    struct ImageDetail: Decodable {
+        let filePath: String
+        
+        var imageURL: URL {
+            return URL(string: "https://image.tmdb.org/t/p/w500\(filePath)")!
+        }
+    }
+}
+
+struct TVShowSeason: Decodable, Identifiable {
+    let id: Int
+    let name: String
+    let overview: String
+    let episodeCount: Int
+    let posterPath: String?
+    let seasonNumber: Int
+    
+    var posterURL: URL {
+        return URL(string: "https://image.tmdb.org/t/p/w500\(posterPath ?? "")")!
+    }
+}
+
+struct TVShowEpisode: Decodable, Identifiable {
+    let id: Int
+    let name: String
+    let overview: String
+    let episodeNumber: Int
+    let seasonNumber: Int
+    let stillPath: String?
+    let airDate: String?
+
+    var stillURL: URL {
+        return URL(string: "https://image.tmdb.org/t/p/w500\(stillPath ?? "")")!
+    }
+
+    var airText: String {
+        guard let airDate = self.airDate, let date = DateUtils.dateFormatter.date(from: airDate) else {
+            return ""
+        }
+        return TVShowEpisode.yearFormatter.string(from: date)
+    }
+
+    static private let yearFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "mm·dd·yyyy"
+        return formatter
+    }()
+}
+
+struct EpisodesResponse: Decodable {
+    let episodes: [TVShowEpisode]
 }
 
 struct TVShowGenre: Decodable {

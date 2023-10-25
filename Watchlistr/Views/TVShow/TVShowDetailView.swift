@@ -6,25 +6,28 @@
 //
 
 import SwiftUI
+import SwiftMessages
+import UserNotifications
 
 struct TVShowDetailView: View {
-    
     let tvShowID: Int
     let tvShowName: String
+    @EnvironmentObject var watchlistState: WatchlistState
     @StateObject private var tvShowDetailState = TVShowDetailState()
+    @StateObject private var tvShowSeriesImagesState = TVShowSeriesImagesState()
+    @StateObject private var tvShowWatchProvidersState = TVShowWatchProvidersState()
     @State private var selectedTrailerURL: URL?
     @State private var wpSeasonNumber = 1
-    
-    @EnvironmentObject var watchlistState: WatchlistState
     @State private var isAddedToWatchlist = false
-    @StateObject private var tvShowWatchProvidersState = TVShowWatchProvidersState()
 
     var body: some View {
         List {
             if let tvShow = tvShowDetailState.tvShow {
-                TVShowDetailImage(imageURL: tvShow.backdropURL)
-                    .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
-                    .listRowSeparator(.hidden)
+                if let seriesImages = tvShowSeriesImagesState.tvShowSeriesImages, let backdrops = seriesImages.backdrops, !backdrops.isEmpty {
+                        TVShowBackdropsView(backdrops: backdrops)
+                            .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+                            .listRowSeparator(.hidden)
+                    }
                 if let providers = tvShowWatchProvidersState.tvShowWatchProviders {
                     HStack {
                         WatchProvidersView(watchProviders: providers)
@@ -89,6 +92,7 @@ struct TVShowDetailView: View {
     private func loadTVShow() {
         Task {
             await self.tvShowDetailState.loadTVShow(id: self.tvShowID)
+            await tvShowSeriesImagesState.loadTVShowSeriesImages(id: tvShowID)
             await tvShowWatchProvidersState.loadTVShowWatchProviders(forTVShow: tvShowID, wpSeason: wpSeasonNumber)
         }
     }
@@ -120,10 +124,14 @@ struct TVShowDetailListView: View {
     let tvShow: TVShow
     @Binding var selectedTrailerURL: URL?
     @State private var selectedSeasonIndex = 0
+    @State private var selectedSeason: TVShowSeason?
+    @State private var episodes: [TVShowEpisode] = []
+    @EnvironmentObject var watchlistState: WatchlistState
 
     var body: some View {
         tvShowDescriptionSection.listRowSeparator(.visible)
         tvShowCastSection.listRowSeparator(.hidden)
+        tvShowSeasonsSection
         tvShowTrailerSection
     }
     
@@ -133,8 +141,7 @@ struct TVShowDetailListView: View {
                 .font(.headline)
             Text(tvShow.overview)
                 .foregroundColor(.blue)
-        }
-        .padding(.vertical)
+        }.padding(.vertical)
     }
     
     private var tvShowGenreYearDurationText: String {
@@ -151,13 +158,13 @@ struct TVShowDetailListView: View {
                         Text("'\($0.character)'")
                             .foregroundColor(.blue)
                     }
-                }
-                .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                }.frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                
                 Spacer()
             }
+            
             if let crew = tvShow.crew, !crew.isEmpty {
                 VStack(alignment: .leading, spacing: 4) {
-                    
                     if let producers = tvShow.producers, !producers.isEmpty {
                         Text("Producer(s):").font(.headline)
                             .padding(.top)
@@ -173,28 +180,91 @@ struct TVShowDetailListView: View {
                                 .foregroundColor(.blue)
                         }
                     }
+                }.frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+            }
+        }.padding(.vertical)
+    }
+    
+    @ViewBuilder
+    private var tvShowSeasonsSection: some View {
+        if let seasons = tvShow.seasons, !seasons.isEmpty {
+            Section(header: Text("Seasons:").font(.headline)) {
+                ForEach(seasons) { season in
+                    NavigationLink(destination: EpisodesListView(tvShowID: tvShow.id, tvShowName: tvShow.name, season: season).environmentObject(watchlistState)) {
+                        HStack {
+                            Text(season.name).foregroundColor(.blue)
+                            Spacer()
+                            Text("\(season.episodeCount) episodes")
+                                .foregroundColor(.secondary)
+                        }
+                    }
                 }
-                .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
             }
         }
-        .padding(.vertical)
     }
     
     @ViewBuilder
     private var tvShowTrailerSection: some View {
         if let trailers = tvShow.youtubeTrailers, !trailers.isEmpty {
-            Text("Trailers").font(.headline)
-            ForEach(trailers) { trailer in
-                Button(action: {
-                    guard let url = trailer.youtubeURL else { return }
-                    selectedTrailerURL = url
-                }) {
-                    HStack {
-                        Text(trailer.name)
-                            .foregroundColor(.accentColor)
-                        Spacer()
-                        Image(systemName: "play.circle.fill")
-                            .foregroundColor(Color(UIColor.systemIndigo))
+            VStack(alignment: .leading) {
+                Text("Trailers").font(.headline)
+                
+                ScrollView(.horizontal, showsIndicators: false) {
+                    LazyHStack(spacing: 16) {
+                        ForEach(trailers) { trailer in
+                            Button(action: {
+                                guard let url = trailer.youtubeURL else { return }
+                                selectedTrailerURL = url
+                            }) {
+                                VStack {
+                                    ZStack(alignment: .center) {
+                                        RemoteImage(url: URL(string: "https://img.youtube.com/vi/\(trailer.key)/0.jpg")!, placeholder: nil)
+                                            .frame(width: 120, height: 70)
+                                            .clipped()
+                                        Image(systemName: "play.circle.fill")
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .frame(width: 40, height: 40)
+                                            .foregroundColor(Color(UIColor.systemIndigo))
+                                    }
+                                    Text(trailer.name)
+                                        .foregroundColor(.accentColor)
+                                        .font(.caption)
+                                        .lineLimit(1)
+                                        .frame(width: 120, alignment: .center)
+                                }
+                            }.padding(.vertical, 8)
+                        }
+                    }
+                }
+            }.padding(.bottom)
+        }
+    }
+}
+
+struct TVShowSeriesImagesView: View {
+    let seriesImages: TVShowSeriesImages
+
+    var body: some View {
+        VStack {
+            Text("Backdrops")
+            ScrollView(.horizontal, showsIndicators: false) {
+                LazyHStack(spacing: 16) {
+                    ForEach(seriesImages.backdrops ?? [], id: \.filePath) { imageDetail in
+                        RemoteImage(url: imageDetail.imageURL, placeholder: nil)
+                            .frame(width: 120, height: 70)
+                            .clipped()
+                    }
+                }
+            }
+
+            Text("Posters")
+            ScrollView(.horizontal, showsIndicators: false) {
+                LazyHStack(spacing: 16) {
+                    ForEach(seriesImages.posters ?? [], id: \.filePath) { imageDetail in
+                        RemoteImage(url: imageDetail.imageURL, placeholder: nil)
+                            .frame(width: 120, height: 70)
+                            .clipped()
                     }
                 }
             }
@@ -202,28 +272,50 @@ struct TVShowDetailListView: View {
     }
 }
 
-struct TVShowDetailImage: View {
-    
-    @StateObject private var imageLoader = ImageLoader()
-    let imageURL: URL
-    
+struct TVShowBackdropsView: View {
+    let backdrops: [TVShowSeriesImages.ImageDetail]
+    @State private var currentIndex: Int = 0
+    @State private var timer: Timer? = nil
+
     var body: some View {
-        ZStack {
-            Color.gray.opacity(0.3)
-            if let image = imageLoader.image {
-                Image(uiImage: image)
-                    .resizable()
+        VStack {
+            if let backdrop = backdrops[safe: currentIndex] {
+                RemoteImage(url: backdrop.imageURL, placeholder: nil)
+                    .frame(width: UIScreen.main.bounds.width, height: 250)
+                    .clipped()
             }
         }
-        .aspectRatio(16/9, contentMode: .fit)
-        .onAppear {imageLoader.loadImage(with: imageURL)}
+        .onAppear {
+            startTimer()
+        }
+        .onDisappear {
+            stopTimer()
+        }
+    }
+
+    func startTimer() {
+        timer?.invalidate()
+        timer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { _ in
+            withAnimation {
+                currentIndex = (currentIndex + 1) % backdrops.count
+            }
+        }
+    }
+
+    func stopTimer() {
+        timer?.invalidate()
+        timer = nil
     }
 }
 
 struct TVShowDetailView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
-            TVShowDetailView(tvShowID: TVShow.stubbedTVShow.id, tvShowName: "Superman")
+            TVShowDetailView(
+                tvShowID: 1396,
+                tvShowName: "Breaking Bad"
+            )
+            .environmentObject(WatchlistState())
         }
     }
 }

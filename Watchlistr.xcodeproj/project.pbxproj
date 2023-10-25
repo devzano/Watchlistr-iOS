@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1520C5FF2ACE2FBD000E918C /* Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1520C5FE2ACE2FBD000E918C /* Keychain.swift */; };
+		1520C6022ACE32A8000E918C /* SwiftMessages in Frameworks */ = {isa = PBXBuildFile; productRef = 1520C6012ACE32A8000E918C /* SwiftMessages */; };
 		1544F9E82A93A9F6002A74C9 /* RemoteImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1544F9E72A93A9F6002A74C9 /* RemoteImageView.swift */; };
 		1544F9EA2A93AE31002A74C9 /* WatchProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1544F9E92A93AE31002A74C9 /* WatchProvider.swift */; };
 		1544F9EC2A93E42C002A74C9 /* WatchProvidersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1544F9EB2A93E42C002A74C9 /* WatchProvidersView.swift */; };
@@ -21,7 +23,7 @@
 		1549510D2A8AD38800C80CCD /* movie_info.json in Resources */ = {isa = PBXBuildFile; fileRef = 154951072A8AD38800C80CCD /* movie_info.json */; };
 		1549510E2A8AD38800C80CCD /* search_tvshow.json in Resources */ = {isa = PBXBuildFile; fileRef = 154951082A8AD38800C80CCD /* search_tvshow.json */; };
 		1549510F2A8AD38800C80CCD /* tvshow_list.json in Resources */ = {isa = PBXBuildFile; fileRef = 154951092A8AD38800C80CCD /* tvshow_list.json */; };
-		154951112A8AD3C100C80CCD /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154951102A8AD3C100C80CCD /* Utils.swift */; };
+		154951112A8AD3C100C80CCD /* DateUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154951102A8AD3C100C80CCD /* DateUtils.swift */; };
 		154951132A8AD3D400C80CCD /* WatchlistrStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154951122A8AD3D400C80CCD /* WatchlistrStore.swift */; };
 		154951152A8AD3DF00C80CCD /* WatchlistrServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154951142A8AD3DF00C80CCD /* WatchlistrServices.swift */; };
 		154951172A8AD3F200C80CCD /* DataFetchPhase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154951162A8AD3F200C80CCD /* DataFetchPhase.swift */; };
@@ -65,14 +67,18 @@
 		154951722A8ADAAF00C80CCD /* FirebaseFirestoreSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 154951712A8ADAAF00C80CCD /* FirebaseFirestoreSwift */; };
 		154951742A8ADAAF00C80CCD /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 154951732A8ADAAF00C80CCD /* FirebaseStorage */; };
 		154951762A8AEC3300C80CCD /* ProfileTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 154951752A8AEC3300C80CCD /* ProfileTabView.swift */; };
+		157516352AE46347002AD960 /* ScheduledNotificationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 157516342AE46347002AD960 /* ScheduledNotificationsView.swift */; };
+		157516372AE46C7D002AD960 /* EpisodeListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 157516362AE46C7D002AD960 /* EpisodeListView.swift */; };
 		157E40E12A8C115A006CC1CC /* MovieWatchlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = 157E40E02A8C115A006CC1CC /* MovieWatchlist.swift */; };
 		157E40E32A8C12B2006CC1CC /* TVShowWatchlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = 157E40E22A8C12B2006CC1CC /* TVShowWatchlist.swift */; };
 		157E40E52A8C138F006CC1CC /* WatchlistState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 157E40E42A8C138F006CC1CC /* WatchlistState.swift */; };
 		157E40E82A8C1AE8006CC1CC /* MovieWatchlistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 157E40E72A8C1AE8006CC1CC /* MovieWatchlistView.swift */; };
 		157E40EA2A8C2A61006CC1CC /* TVShowWatchlistView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 157E40E92A8C2A61006CC1CC /* TVShowWatchlistView.swift */; };
+		15CB75542AD1092200FD221C /* SwiftMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15CB75532AD1092200FD221C /* SwiftMessage.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1520C5FE2ACE2FBD000E918C /* Keychain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keychain.swift; sourceTree = "<group>"; };
 		1544F9E72A93A9F6002A74C9 /* RemoteImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteImageView.swift; sourceTree = "<group>"; };
 		1544F9E92A93AE31002A74C9 /* WatchProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchProvider.swift; sourceTree = "<group>"; };
 		1544F9EB2A93E42C002A74C9 /* WatchProvidersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchProvidersView.swift; sourceTree = "<group>"; };
@@ -88,7 +94,7 @@
 		154951072A8AD38800C80CCD /* movie_info.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = movie_info.json; sourceTree = "<group>"; };
 		154951082A8AD38800C80CCD /* search_tvshow.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = search_tvshow.json; sourceTree = "<group>"; };
 		154951092A8AD38800C80CCD /* tvshow_list.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = tvshow_list.json; sourceTree = "<group>"; };
-		154951102A8AD3C100C80CCD /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
+		154951102A8AD3C100C80CCD /* DateUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateUtils.swift; sourceTree = "<group>"; };
 		154951122A8AD3D400C80CCD /* WatchlistrStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchlistrStore.swift; sourceTree = "<group>"; };
 		154951142A8AD3DF00C80CCD /* WatchlistrServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchlistrServices.swift; sourceTree = "<group>"; };
 		154951162A8AD3F200C80CCD /* DataFetchPhase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataFetchPhase.swift; sourceTree = "<group>"; };
@@ -126,11 +132,15 @@
 		154951642A8AD97A00C80CCD /* ButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonView.swift; sourceTree = "<group>"; };
 		154951662A8ADA4900C80CCD /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
 		154951752A8AEC3300C80CCD /* ProfileTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileTabView.swift; sourceTree = "<group>"; };
+		15710DB52AE33E8A00FE0EA0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		157516342AE46347002AD960 /* ScheduledNotificationsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScheduledNotificationsView.swift; sourceTree = "<group>"; };
+		157516362AE46C7D002AD960 /* EpisodeListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EpisodeListView.swift; sourceTree = "<group>"; };
 		157E40E02A8C115A006CC1CC /* MovieWatchlist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieWatchlist.swift; sourceTree = "<group>"; };
 		157E40E22A8C12B2006CC1CC /* TVShowWatchlist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVShowWatchlist.swift; sourceTree = "<group>"; };
 		157E40E42A8C138F006CC1CC /* WatchlistState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchlistState.swift; sourceTree = "<group>"; };
 		157E40E72A8C1AE8006CC1CC /* MovieWatchlistView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieWatchlistView.swift; sourceTree = "<group>"; };
 		157E40E92A8C2A61006CC1CC /* TVShowWatchlistView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TVShowWatchlistView.swift; sourceTree = "<group>"; };
+		15CB75532AD1092200FD221C /* SwiftMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftMessage.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -139,6 +149,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				154951722A8ADAAF00C80CCD /* FirebaseFirestoreSwift in Frameworks */,
+				1520C6022ACE32A8000E918C /* SwiftMessages in Frameworks */,
 				1549516E2A8ADAAF00C80CCD /* FirebaseDatabaseSwift in Frameworks */,
 				154951702A8ADAAF00C80CCD /* FirebaseFirestore in Frameworks */,
 				1549516C2A8ADAAF00C80CCD /* FirebaseDatabase in Frameworks */,
@@ -188,6 +199,7 @@
 				154950FC2A8ACF8E00C80CCD /* Resources */,
 				154950EE2A8ACF1000C80CCD /* Preview Content */,
 				154951662A8ADA4900C80CCD /* GoogleService-Info.plist */,
+				15710DB52AE33E8A00FE0EA0 /* Info.plist */,
 				154950EC2A8ACF1000C80CCD /* Assets.xcassets */,
 			);
 			path = Watchlistr;
@@ -281,10 +293,11 @@
 		154950FD2A8ACF9800C80CCD /* Services */ = {
 			isa = PBXGroup;
 			children = (
-				154951102A8AD3C100C80CCD /* Utils.swift */,
+				154951102A8AD3C100C80CCD /* DateUtils.swift */,
 				154951122A8AD3D400C80CCD /* WatchlistrStore.swift */,
 				154951142A8AD3DF00C80CCD /* WatchlistrServices.swift */,
 				154951162A8AD3F200C80CCD /* DataFetchPhase.swift */,
+				15CB75532AD1092200FD221C /* SwiftMessage.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -293,6 +306,7 @@
 			isa = PBXGroup;
 			children = (
 				154951182A8AD4B000C80CCD /* ImageLoader.swift */,
+				157516342AE46347002AD960 /* ScheduledNotificationsView.swift */,
 				1549511A2A8AD4C400C80CCD /* WatchlistrDetailState.swift */,
 				1549511C2A8AD4CE00C80CCD /* WatchlistrListState.swift */,
 				1549511E2A8AD4DA00C80CCD /* WatchlistrHomeState.swift */,
@@ -318,6 +332,7 @@
 			children = (
 				1549514D2A8AD83400C80CCD /* User.swift */,
 				154951022A8ACFE900C80CCD /* AuthViewModel.swift */,
+				1520C5FE2ACE2FBD000E918C /* Keychain.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -359,6 +374,7 @@
 				1549513D2A8AD73F00C80CCD /* TVShowThumbnailView.swift */,
 				154951412A8AD75B00C80CCD /* TVShowThumbnailCarouselView.swift */,
 				154951492A8AD79100C80CCD /* TVShowDetailView.swift */,
+				157516362AE46C7D002AD960 /* EpisodeListView.swift */,
 			);
 			path = TVShow;
 			sourceTree = "<group>";
@@ -405,6 +421,7 @@
 				1549516F2A8ADAAF00C80CCD /* FirebaseFirestore */,
 				154951712A8ADAAF00C80CCD /* FirebaseFirestoreSwift */,
 				154951732A8ADAAF00C80CCD /* FirebaseStorage */,
+				1520C6012ACE32A8000E918C /* SwiftMessages */,
 			);
 			productName = Watchlistr;
 			productReference = 154950E52A8ACF0F00C80CCD /* Watchlistr.app */;
@@ -418,7 +435,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1430;
-				LastUpgradeCheck = 1430;
+				LastUpgradeCheck = 1500;
 				TargetAttributes = {
 					154950E42A8ACF0F00C80CCD = {
 						CreatedOnToolsVersion = 14.3.1;
@@ -436,6 +453,7 @@
 			mainGroup = 154950DC2A8ACF0F00C80CCD;
 			packageReferences = (
 				154951682A8ADAAF00C80CCD /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				1520C6002ACE32A8000E918C /* XCRemoteSwiftPackageReference "SwiftMessages" */,
 			);
 			productRefGroup = 154950E62A8ACF0F00C80CCD /* Products */;
 			projectDirPath = "";
@@ -474,7 +492,9 @@
 				1549515B2A8AD8EB00C80CCD /* SignupView.swift in Sources */,
 				154950EB2A8ACF0F00C80CCD /* ContentView.swift in Sources */,
 				154951172A8AD3F200C80CCD /* DataFetchPhase.swift in Sources */,
+				157516352AE46347002AD960 /* ScheduledNotificationsView.swift in Sources */,
 				1544F9EC2A93E42C002A74C9 /* WatchProvidersView.swift in Sources */,
+				15CB75542AD1092200FD221C /* SwiftMessage.swift in Sources */,
 				1549514C2A8AD79D00C80CCD /* MovieDetailView.swift in Sources */,
 				154951212A8AD4E400C80CCD /* WatchlistrSearchState.swift in Sources */,
 				1549514E2A8AD83400C80CCD /* User.swift in Sources */,
@@ -492,11 +512,13 @@
 				154951762A8AEC3300C80CCD /* ProfileTabView.swift in Sources */,
 				157E40E12A8C115A006CC1CC /* MovieWatchlist.swift in Sources */,
 				1544F9EA2A93AE31002A74C9 /* WatchProvider.swift in Sources */,
+				157516372AE46C7D002AD960 /* EpisodeListView.swift in Sources */,
 				1549511B2A8AD4C400C80CCD /* WatchlistrDetailState.swift in Sources */,
 				154951402A8AD74C00C80CCD /* MovieThumbnailView.swift in Sources */,
 				154951152A8AD3DF00C80CCD /* WatchlistrServices.swift in Sources */,
 				154951632A8AD96B00C80CCD /* SettingsRowView.swift in Sources */,
 				154951322A8AD64400C80CCD /* SafariView.swift in Sources */,
+				1520C5FF2ACE2FBD000E918C /* Keychain.swift in Sources */,
 				157E40E82A8C1AE8006CC1CC /* MovieWatchlistView.swift in Sources */,
 				154951132A8AD3D400C80CCD /* WatchlistrStore.swift in Sources */,
 				157E40EA2A8C2A61006CC1CC /* TVShowWatchlistView.swift in Sources */,
@@ -515,7 +537,7 @@
 				154951612A8AD95A00C80CCD /* InputView.swift in Sources */,
 				154951192A8AD4B000C80CCD /* ImageLoader.swift in Sources */,
 				1549511F2A8AD4DA00C80CCD /* WatchlistrHomeState.swift in Sources */,
-				154951112A8AD3C100C80CCD /* Utils.swift in Sources */,
+				154951112A8AD3C100C80CCD /* DateUtils.swift in Sources */,
 				154951302A8AD63900C80CCD /* ActivityIndicatorView.swift in Sources */,
 				1549513A2A8AD6BC00C80CCD /* MovieTabView.swift in Sources */,
 			);
@@ -560,6 +582,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -620,6 +643,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -644,11 +668,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 8;
 				DEVELOPMENT_ASSET_PATHS = "\"Watchlistr/Preview Content\"";
 				DEVELOPMENT_TEAM = RZB7U5UTY4;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Watchlistr/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Watchlistr;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -660,7 +685,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.4;
+				MARKETING_VERSION = 1.0.6;
 				PRODUCT_BUNDLE_IDENTIFIER = com.devzano.Watchlistr;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -678,11 +703,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 8;
 				DEVELOPMENT_ASSET_PATHS = "\"Watchlistr/Preview Content\"";
 				DEVELOPMENT_TEAM = RZB7U5UTY4;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Watchlistr/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Watchlistr;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.entertainment";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -694,7 +720,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.4;
+				MARKETING_VERSION = 1.0.6;
 				PRODUCT_BUNDLE_IDENTIFIER = com.devzano.Watchlistr;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -730,6 +756,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		1520C6002ACE32A8000E918C /* XCRemoteSwiftPackageReference "SwiftMessages" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SwiftKickMobile/SwiftMessages";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.0.6;
+			};
+		};
 		154951682A8ADAAF00C80CCD /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
@@ -741,6 +775,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		1520C6012ACE32A8000E918C /* SwiftMessages */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1520C6002ACE32A8000E918C /* XCRemoteSwiftPackageReference "SwiftMessages" */;
+			productName = SwiftMessages;
+		};
 		154951692A8ADAAF00C80CCD /* FirebaseAuth */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 154951682A8ADAAF00C80CCD /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;

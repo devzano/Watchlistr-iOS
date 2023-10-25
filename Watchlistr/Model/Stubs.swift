@@ -28,7 +28,7 @@ extension Bundle {
         }
         
         let data = try Data(contentsOf: url)
-        let jsonDecoder = Utils.jsonDecoder
+        let jsonDecoder = DateUtils.jsonDecoder
         let decodedModel = try jsonDecoder.decode(D.self, from: data)
         
         return decodedModel
@@ -68,7 +68,7 @@ extension Bundle {
         }
         
         let data = try Data(contentsOf: url)
-        let jsonDecoder = Utils.jsonDecoder
+        let jsonDecoder = DateUtils.jsonDecoder
         let decodedModel = try jsonDecoder.decode(D.self, from: data)
         
         return decodedModel

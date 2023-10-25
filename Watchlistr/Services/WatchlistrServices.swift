@@ -11,6 +11,7 @@ import Foundation
 protocol MovieService {
     func fetchMovies(from endpoint: MovieListEndpoint) async throws -> [Movie]
     func fetchMovie(id: Int) async throws -> Movie
+    func fetchMovieImages(id: Int) async throws -> MovieImages
     func searchMovie(query: String) async throws -> [Movie]
 }
 
@@ -58,6 +59,7 @@ enum MovieError: Error, CustomNSError {
 protocol TVShowService {
     func fetchTVShows(from endpoint: TVShowListEndpoint) async throws -> [TVShow]
     func fetchTVShow(id: Int) async throws -> TVShow
+    func fetchTVShowSeriesImages(id: Int) async throws -> TVShowSeriesImages
     func searchTVShow(query: String) async throws -> [TVShow]
 }
 

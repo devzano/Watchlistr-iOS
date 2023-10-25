@@ -12,10 +12,10 @@ class MovieStore: MovieService {
     static let shared = MovieStore()
     private init() {}
 
-    private let apiKey = "92d4fa842063577e07342a78969bf283"
+    private let apiKey = "d3ac7c10e036f4d3d94177373acff659"
     private let baseAPIURL = "https://api.themoviedb.org/3"
     private let urlSession = URLSession.shared
-    private let jsonDecoder = Utils.jsonDecoder
+    private let jsonDecoder = DateUtils.jsonDecoder
 
     func fetchMovies(from endpoint: MovieListEndpoint) async throws -> [Movie] {
         guard let url = URL(string: "\(baseAPIURL)/movie/\(endpoint.rawValue)") else {
@@ -38,7 +38,15 @@ class MovieStore: MovieService {
             "append_to_response": "videos,credits",
         ])
     }
-
+    
+    func fetchMovieImages(id: Int) async throws -> MovieImages {
+        guard let url = URL(string: "\(baseAPIURL)/movie/\(id)/images") else {
+            throw MovieError.invalidEndpoint
+        }
+        return try await self.loadURLAndDecode(url: url)
+    }
+    
+    
     func searchMovie(query: String) async throws -> [Movie] {
         guard let url = URL(string: "\(baseAPIURL)/search/movie") else {
             throw MovieError.invalidEndpoint
@@ -61,6 +69,7 @@ class MovieStore: MovieService {
         
         return try await self.loadURLAndDecode(url: url)
     }
+    
     private func loadURLAndDecode<D: Decodable>(url: URL, params: [String: String]? = nil) async throws -> D {
         guard var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
             throw MovieError.invalidEndpoint
@@ -89,8 +98,6 @@ class MovieStore: MovieService {
 }
 
 //TVShowStore
-import Foundation
-
 class TVShowStore: TVShowService {
     static let shared = TVShowStore()
     private init() {}
@@ -98,7 +105,7 @@ class TVShowStore: TVShowService {
     private let apiKey = "92d4fa842063577e07342a78969bf283"
     private let baseAPIURL = "https://api.themoviedb.org/3"
     private let urlSession = URLSession.shared
-    private let jsonDecoder = Utils.jsonDecoder
+    private let jsonDecoder = DateUtils.jsonDecoder
     
     func fetchTVShows(from endpoint: TVShowListEndpoint) async throws -> [TVShow] {
         guard let url = URL(string: "\(baseAPIURL)/tv/\(endpoint.rawValue)") else {
@@ -123,6 +130,13 @@ class TVShowStore: TVShowService {
         ])
     }
     
+    func fetchTVShowSeriesImages(id: Int) async throws -> TVShowSeriesImages {
+        guard let url = URL(string: "\(baseAPIURL)/tv/\(id)/images") else {
+            throw TVShowError.invalidEndpoint
+        }
+        return try await self.loadURLAndDecode(url: url)
+    }
+    
     func searchTVShow(query: String) async throws -> [TVShow] {
         guard let url = URL(string: "\(baseAPIURL)/search/tv") else {
             throw TVShowError.invalidEndpoint
@@ -135,6 +149,20 @@ class TVShowStore: TVShowService {
         ])
         
         return tvshowResponse.results
+    }
+    
+    func fetchSeasons(forTVShow tvShowID: Int) async throws -> [TVShowSeason] {
+        guard let url = URL(string: "\(baseAPIURL)/tv/\(tvShowID)/season") else {
+            throw TVShowError.invalidEndpoint
+        }
+        return try await self.loadURLAndDecode(url: url)
+    }
+        
+    func fetchEpisodes(forTVShow tvShowID: Int, seasonNumber: Int) async throws -> EpisodesResponse {
+        guard let url = URL(string: "\(baseAPIURL)/tv/\(tvShowID)/season/\(seasonNumber)") else {
+            throw TVShowError.invalidEndpoint
+        }
+        return try await self.loadURLAndDecode(url: url)
     }
     
     func fetchWatchProviders(forTVShow tvShowID: Int, wpSeason: Int) async throws -> WatchProvidersResponse {

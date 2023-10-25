@@ -93,8 +93,18 @@ struct ProfileTabView: View {
                                 secondaryButton: .cancel()
                             )
                         }
-                    }
-                    
+                        
+                        if let currentUser = vm.currentUser {
+                            NavigationLink(destination: ScheduledNotificationsView(username: currentUser.username)) {
+                                SettingsRowView(
+                                    imageName: "bell.fill",
+                                    title: "Notifications",
+                                    tintColor: .green
+                                )
+                            }
+                        }
+                    }.listRowSeparator(.hidden)
+                   
                     Section("General") {
                         HStack {
                             SettingsRowView(
@@ -161,7 +171,7 @@ struct ProfileTabView: View {
                                 secondaryButton: .cancel()
                             )
                         }
-                    }
+                    }.listRowSeparator(.hidden)
                 }.navigationTitle("Watchlistr Profile")
             }
         }
@@ -172,7 +182,8 @@ struct ProfileTabView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
             ProfileTabView()
+                .environmentObject(AuthViewModel())
+                .environmentObject(WatchlistState())
         }
-        .environmentObject(AuthViewModel())
     }
 }

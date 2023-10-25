@@ -1,5 +1,5 @@
 //
-//  Utils.swift
+//  DateUtils.swift
 //  Watchlistr
 //
 //  Created by Ruben Manzano on 8/14/23.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-class Utils {
+class DateUtils {
     static let jsonDecoder: JSONDecoder = {
         let jsonDecoder = JSONDecoder()
         jsonDecoder.keyDecodingStrategy = .convertFromSnakeCase

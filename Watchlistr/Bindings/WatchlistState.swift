@@ -10,6 +10,7 @@ import Combine
 import Firebase
 import FirebaseFirestore
 import FirebaseFirestoreSwift
+import SwiftMessages
 
 class WatchlistState: ObservableObject {
     @ObservedObject var vm = AuthViewModel()
@@ -37,8 +38,13 @@ class WatchlistState: ObservableObject {
     func addMovieToWatchlist(movie: Movie) {
         guard let userID = self.userID else { return }
 
-        let movieWatchlist = MovieWatchlist(id: movie.id, title: movie.title, backdropPath: movie.backdropPath, posterPath: movie.posterPath, overview: movie.overview)
-
+        let movieWatchlist = MovieWatchlist(
+            id: movie.id,
+            title: movie.title,
+            backdropPath: movie.backdropPath,
+            posterPath: movie.posterPath,
+            overview: movie.overview,
+            watched: false)
         DispatchQueue.main.async {
             self.mWatchlist.append(movieWatchlist)
             self.watchlistPhase = .success(())
@@ -60,7 +66,7 @@ class WatchlistState: ObservableObject {
                     ])
                 }
             } catch {
-                print("Error encoding movie: \(error)")
+                showError(message: "Error adding movie to watchlist: \(error.localizedDescription)")
             }
         }
     }
@@ -79,14 +85,20 @@ class WatchlistState: ObservableObject {
                 "movies": FieldValue.arrayRemove([movieData])
             ])
         } catch {
-            print("Error encoding movie: \(error)")
+            showError(message: "Error removing movie to watchlist: \(error.localizedDescription)")
         }
     }
     
     func addTVShowToWatchlist(tvShow: TVShow) {
         guard let userID = self.userID else { return }
 
-        let tvShowWatchlist = TVShowWatchlist(id: tvShow.id, name: tvShow.name, backdropPath: tvShow.backdropPath, posterPath: tvShow.posterPath, overview: tvShow.overview)
+        let tvShowWatchlist = TVShowWatchlist(
+            id: tvShow.id,
+            name: tvShow.name,
+            backdropPath: tvShow.backdropPath,
+            posterPath: tvShow.posterPath,
+            overview: tvShow.overview,
+            watched: false)
 
         DispatchQueue.main.async {
             self.tvWatchlist.append(tvShowWatchlist)
@@ -109,7 +121,7 @@ class WatchlistState: ObservableObject {
                     ])
                 }
             } catch {
-                print("Error encoding TV show: \(error)")
+                showError(message: "Error adding TV show to watchlist: \(error.localizedDescription)")
             }
         }
     }
@@ -128,7 +140,7 @@ class WatchlistState: ObservableObject {
                 "tvShows": FieldValue.arrayRemove([tvShowData])
             ])
         } catch {
-            print("Error encoding TV show: \(error)")
+            showError(message: "Error removing TV show to watchlist: \(error.localizedDescription)")
         }
     }
 
@@ -156,10 +168,10 @@ class WatchlistState: ObservableObject {
                         }
                     }
                 } catch {
-                    print("Error decoding watchlist: \(error)")
+                    showError(message: "Error decoding watchlist: \(error.localizedDescription)")
                 }
             } else {
-                print("Document does not exist")
+                showMessage(withTitle: "Watchlists", message: "No media in your watchlists. Add movies or shows to track them!", theme: .info, duration: 5.0)
             }
         }
     }
@@ -173,9 +185,9 @@ class WatchlistState: ObservableObject {
             "movies": FieldValue.delete()
         ]) { error in
             if let error = error {
-                print("Error clearing watchlist: \(error)")
+                showError(message: "Error clearing watchlist: \(error.localizedDescription)")
             } else {
-                print("Watchlist cleared successfully")
+                showSuccess(message: "Watchlist cleared successfully")
             }
         }
     }
@@ -189,9 +201,9 @@ class WatchlistState: ObservableObject {
             "tvShows": FieldValue.delete()
         ]) { error in
             if let error = error {
-                print("Error clearing watchlist: \(error)")
+                showError(message: "Error clearing watchlist: \(error.localizedDescription)")
             } else {
-                print("Watchlist cleared successfully")
+                showSuccess(message: "Watchlist cleared successfully")
             }
         }
     }
@@ -208,6 +220,81 @@ class WatchlistState: ObservableObject {
         filteredMovies = searchWatchlistMovies(query: query)
         filteredTVShows = searchWatchlistTVShows(query: query)
     }
+    
+    func watchedMovieInFirestore(movie: MovieWatchlist) {
+        guard let userID = self.userID else { return }
+        let db = Firestore.firestore()
+        let docRef = db.collection("watchlists").document(userID)
+        
+        docRef.getDocument { (document, error) in
+            if let document = document, document.exists {
+                if var movies = document.get("movies") as? [[String: Any]] {
+                    if let index = movies.firstIndex(where: { ($0["id"] as? Int) == movie.id }) {
+                        do {
+                            let movieData = try movie.toFirestoreData()
+                            movies[index] = movieData
+                            docRef.updateData([
+                                "movies": movies
+                            ])
+                        } catch {
+                            showError(message: "Error encoding movie: \(error)")
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    func watchedTVShowInFirestore(tvShow: TVShowWatchlist) {
+        guard let userID = self.userID else { return }
+        let db = Firestore.firestore()
+        let docRef = db.collection("watchlists").document(userID)
+        
+        docRef.getDocument { (document, error) in
+            if let document = document, document.exists {
+                if var tvShows = document.get("tvShows") as? [[String: Any]] {
+                    if let index = tvShows.firstIndex(where: { ($0["id"] as? Int) == tvShow.id }) {
+                        do {
+                            let tvShowData = try tvShow.toFirestoreData()
+                            tvShows[index] = tvShowData
+                            docRef.updateData([
+                                "tvShows": tvShows
+                            ])
+                        } catch {
+                            showError(message: "Error encoding TV show: \(error)")
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    func toggleEpisodeWatchStatus(tvShowID: Int, episodeID: Int) {
+        if let index = tvWatchlist.firstIndex(where: { $0.id == tvShowID }) {
+            if tvWatchlist[index].watchedEpisodes.contains(episodeID) {
+                unwatchEpisode(tvShowIndex: index, episodeID: episodeID)
+            } else {
+                tvWatchlist[index].watchedEpisodes.append(episodeID)
+            }
+            watchedTVShowInFirestore(tvShow: tvWatchlist[index])
+        } else {
+            showError(message: "TV Show not found in watchlist!")
+        }
+    }
+
+    private func unwatchEpisode(tvShowIndex: Int, episodeID: Int) {
+        if let episodeIndex = tvWatchlist[tvShowIndex].watchedEpisodes.firstIndex(of: episodeID) {
+            tvWatchlist[tvShowIndex].watchedEpisodes.remove(at: episodeIndex)
+        }
+    }
+
+    func isEpisodeWatched(tvShowID: Int, episodeID: Int) -> Bool {
+        if let tvShow = tvWatchlist.first(where: { $0.id == tvShowID }) {
+            return tvShow.watchedEpisodes.contains(episodeID)
+        }
+        return false
+    }
+
 }
 
 extension MovieWatchlist {

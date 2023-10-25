@@ -58,7 +58,7 @@ struct Movie: Decodable, Identifiable, Hashable, Equatable {
     
     var genreText: String {
         guard let genres = genres, !genres.isEmpty else {
-            return "n/a"
+            return ""
         }
         
         let genreNames = genres.map { $0.name }
@@ -76,23 +76,23 @@ struct Movie: Decodable, Identifiable, Hashable, Equatable {
     
     var scoreText: String {
         guard ratingText.count > 0 else {
-            return "n/a"
+            return ""
         }
         return "\(ratingText.count)/10"
     }
     
     var releaseText: String {
-        guard let releaseDate = self.releaseDate, let date = Utils.dateFormatter.date(from: releaseDate) else {
-            return "n/a"
+        guard let releaseDate = self.releaseDate, let date = DateUtils.dateFormatter.date(from: releaseDate) else {
+            return ""
         }
         return Movie.yearFormatter.string(from: date)
     }
     
     var durationText: String {
         guard let runtime = self.runtime, runtime > 0 else {
-            return "n/a"
+            return ""
         }
-        return Movie.durationFormatter.string(from: TimeInterval(runtime) * 60) ?? "n/a"
+        return Movie.durationFormatter.string(from: TimeInterval(runtime) * 60) ?? ""
     }
     
     var cast: [MovieCast]? {
@@ -117,6 +117,19 @@ struct Movie: Decodable, Identifiable, Hashable, Equatable {
     
     var youtubeTrailers: [MovieVideo]? {
         videos?.results.filter {$0.youtubeURL != nil}
+    }
+}
+
+struct MovieImages: Decodable {
+    let backdrops: [ImageDetail]?
+    let posters: [ImageDetail]?
+    
+    struct ImageDetail: Decodable {
+        let filePath: String
+        
+        var imageURL: URL {
+            return URL(string: "https://image.tmdb.org/t/p/w500\(filePath)")!
+        }
     }
 }
 

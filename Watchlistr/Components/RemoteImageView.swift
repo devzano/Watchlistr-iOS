@@ -9,6 +9,7 @@ import SwiftUI
 
 struct RemoteImage: View {
     let url: URL
+    var placeholder: Image? = Image(systemName: "photo")
     
     var body: some View {
         AsyncImage(url: url) { phase in
@@ -18,7 +19,7 @@ struct RemoteImage: View {
                     .resizable()
                     .aspectRatio(contentMode: .fit)
             case .failure(_):
-                Image(systemName: "photo")
+                placeholder?
                     .resizable()
                     .aspectRatio(contentMode: .fit)
             case .empty:

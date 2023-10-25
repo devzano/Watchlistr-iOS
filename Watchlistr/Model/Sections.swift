@@ -23,7 +23,6 @@ struct MovieSection: Identifiable {
 }
 
 fileprivate extension MovieListEndpoint {
-    
     var thumbnailType: MovieThumbnailType {
         switch self {
         case .nowPlaying:
@@ -50,7 +49,6 @@ struct TVShowSection: Identifiable {
 }
 
 fileprivate extension TVShowListEndpoint {
-    
     var thumbnailType: TVShowThumbnailType {
         switch self {
         case .airingToday:

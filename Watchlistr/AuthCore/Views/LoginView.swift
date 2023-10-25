@@ -6,13 +6,15 @@
 //
 
 import SwiftUI
+import SwiftMessages
 
 struct LoginView: View {
     @State private var email = ""
     @State private var password = ""
     @State private var isLoggingIn = false
     @EnvironmentObject var vm: AuthViewModel
-    
+    private let keychain = KeychainWrapper()
+
     var body: some View {
         NavigationView {
             ZStack {
@@ -25,6 +27,7 @@ struct LoginView: View {
                             .scaledToFill()
                             .frame(width: 100, height: 120)
                     }.padding(.vertical, 50)
+                    
                     VStack(spacing: 24) {
                         InputView(
                             text: $email,
@@ -48,7 +51,9 @@ struct LoginView: View {
                                 }
                                 .font(.system(size: 14))
                             }
+                            
                             Spacer()
+                            
                             NavigationLink {
                                 ForgotPassView().navigationBarBackButtonHidden(true)
                             } label: {
@@ -67,6 +72,16 @@ struct LoginView: View {
                         Task {
                             do {
                                 try await vm.signIn(withEmail: email, password: password)
+                                let emailSaved = keychain.saveEmail(email: email)
+                                let passwordSaved = keychain.savePassword(password: password)
+                                
+                                if !emailSaved || !passwordSaved {
+                                    let view = MessageView.viewFromNib(layout: .cardView)
+                                    view.configureTheme(.error)
+                                    view.configureDropShadow()
+                                    view.configureContent(title: "Error", body: "Failed to save credentials. Please retry.")
+                                    SwiftMessages.show(view: view)
+                                }
                             } catch {
                                 isLoggingIn = false
                             }
@@ -87,7 +102,17 @@ struct LoginView: View {
             }
             .onAppear {
                 startImageTimer()
+                loadCredentialsFromKeychain()
             }
+        }
+    }
+    
+    private func loadCredentialsFromKeychain() {
+        if let savedEmail = keychain.retrieveEmail() {
+            email = savedEmail
+        }
+        if let savedPassword = keychain.retrievePassword() {
+            password = savedPassword
         }
     }
     

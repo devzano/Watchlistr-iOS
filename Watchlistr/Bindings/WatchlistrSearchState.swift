@@ -79,7 +79,6 @@ class MovieSearchState: ObservableObject {
 //TVShowSearchState
 @MainActor
 class TVShowSearchState: ObservableObject {
-    
     @Published var query = ""
     @Published private(set) var phase: DataFetchPhase<[TVShow]> = .empty
     
