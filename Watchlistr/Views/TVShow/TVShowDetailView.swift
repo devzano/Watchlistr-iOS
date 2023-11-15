@@ -16,6 +16,7 @@ struct TVShowDetailView: View {
     @StateObject private var tvShowDetailState = TVShowDetailState()
     @StateObject private var tvShowSeriesImagesState = TVShowSeriesImagesState()
     @StateObject private var tvShowWatchProvidersState = TVShowWatchProvidersState()
+    @StateObject private var tvdbServiceState = TVDBServiceState()
     @State private var selectedTrailerURL: URL?
     @State private var wpSeasonNumber = 1
     @State private var isAddedToWatchlist = false
@@ -24,34 +25,56 @@ struct TVShowDetailView: View {
         List {
             if let tvShow = tvShowDetailState.tvShow {
                 if let seriesImages = tvShowSeriesImagesState.tvShowSeriesImages, let backdrops = seriesImages.backdrops, !backdrops.isEmpty {
-                        TVShowBackdropsView(backdrops: backdrops)
-                            .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
-                            .listRowSeparator(.hidden)
-                    }
+                    TVShowBackdropsView(backdrops: backdrops)
+                        .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+                        .listRowSeparator(.hidden)
+                }
+
                 if let providers = tvShowWatchProvidersState.tvShowWatchProviders {
                     HStack {
                         WatchProvidersView(watchProviders: providers)
                             .listRowSeparator(.hidden)
                         Spacer()
-                        if !tvShow.ratingText.isEmpty {
+                        if tvShow.ratingText != "NR" {
                             VStack(alignment: .center) {
                                 Text("Rating")
                                     .font(.headline)
-                                Text("\(tvShow.ratingText)")
-                                    .font(.system(size: 22, weight: .bold))
-                                    .foregroundColor(.white)
-                                    .padding(.horizontal, 10)
-                                    .padding(.vertical, 5)
-                                    .background(
-                                        LinearGradient(gradient: Gradient(colors: [.purple, .blue]), startPoint: .leading, endPoint: .trailing)
+                                Text(tvShow.ratingText)
+                                    .font(.system(size: 24, weight: .bold))
+                                    .foregroundColor(.primary)
+                                    .padding(.horizontal, 17)
+                                    .padding(.vertical, 10)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .stroke(LinearGradient(gradient: Gradient(colors: [.blue, .indigo]), startPoint: .leading, endPoint: .trailing), lineWidth: 2)
                                     )
                                     .cornerRadius(10)
-                                    .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
+                                    .shadow(color: .black.opacity(0.3), radius: 3, x: 0, y: 2)
+                            }
+                        } else {
+                            VStack(alignment: .center) {
+                                Text("Rating")
+                                    .font(.headline)
+                                Text("NR")
+                                    .font(.system(size: 24, weight: .bold))
+                                    .foregroundColor(.primary)
+                                    .padding(.horizontal, 17)
+                                    .padding(.vertical, 10)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .stroke(LinearGradient(gradient: Gradient(colors: [.blue, .indigo]), startPoint: .leading, endPoint: .trailing), lineWidth: 3)
+                                    )
+                                    .cornerRadius(10)
+                                    .shadow(color: .black.opacity(0.3), radius: 3, x: 0, y: 2)
                             }
                         }
                     }
                 }
-                TVShowDetailListView(tvShow: tvShow, selectedTrailerURL: $selectedTrailerURL)
+
+                TVShowDetailListView(tvShow: tvShow,
+                                     selectedTrailerURL: $selectedTrailerURL,
+                                     airsTime: tvdbServiceState.airsTime,
+                                     airsDays: tvdbServiceState.airsDays)
             }
         }
         .listStyle(.plain)
@@ -68,7 +91,7 @@ struct TVShowDetailView: View {
         .toolbar {
             ToolbarItem(placement: .principal) {
                 Text(tvShowName)
-                    .foregroundColor(.blue)
+                    .foregroundColor(.indigo)
             }
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: {
@@ -83,20 +106,28 @@ struct TVShowDetailView: View {
                             .foregroundColor(.green)
                     } else {
                         Image(systemName: "plus.circle")
+                            .foregroundColor(.blue)
                     }
                 }
             }
         }
     }
-    
+
     private func loadTVShow() {
         Task {
+            if case .success(_) = tvShowDetailState.phase {
+                return
+            }
+
             await self.tvShowDetailState.loadTVShow(id: self.tvShowID)
             await tvShowSeriesImagesState.loadTVShowSeriesImages(id: tvShowID)
             await tvShowWatchProvidersState.loadTVShowWatchProviders(forTVShow: tvShowID, wpSeason: wpSeasonNumber)
+            if let tvdbID = tvShowDetailState.externalIDs?.tvdbId {
+                await tvdbServiceState.fetchAirsTimeAndDays(forSeriesID: tvdbID, withAPIKey: ["INSERT_API_KEY"])
+            }
         }
     }
-    
+
     private var isTVShowInWatchlist: Bool {
         if let tvShow = tvShowDetailState.tvShow {
             return watchlistState.tvWatchlist.contains { $0.id == tvShow.id }
@@ -110,7 +141,7 @@ struct TVShowDetailView: View {
             isAddedToWatchlist = true
         }
     }
-    
+
     private func removeFromWatchlist() {
         if let tvShow = tvShowDetailState.tvShow,
            let existingTVShowWatchlist = watchlistState.tvWatchlist.first(where: { $0.id == tvShow.id }) {
@@ -123,10 +154,14 @@ struct TVShowDetailView: View {
 struct TVShowDetailListView: View {
     let tvShow: TVShow
     @Binding var selectedTrailerURL: URL?
+    let airsTime: String?
+    let airsDays: [String]?
     @State private var selectedSeasonIndex = 0
     @State private var selectedSeason: TVShowSeason?
     @State private var episodes: [TVShowEpisode] = []
     @EnvironmentObject var watchlistState: WatchlistState
+    @StateObject private var tvdbServiceState = TVDBServiceState()
+    @State private var isDataLoaded = false
 
     var body: some View {
         tvShowDescriptionSection.listRowSeparator(.visible)
@@ -134,36 +169,71 @@ struct TVShowDetailListView: View {
         tvShowSeasonsSection
         tvShowTrailerSection
     }
-    
+
     private var tvShowDescriptionSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text(tvShowGenreYearDurationText)
-                .font(.headline)
+        VStack(alignment: .leading, spacing: 10) {
+            if let airsInfo = formattedAirsInfoText {
+                HStack {
+                    Text("Genre: ").foregroundColor(.blue)
+                    + Text(tvShow.genreText)
+                    + Text(" · Airs: ").foregroundColor(.blue)
+                    + Text(airsInfo)
+                    + Text(" · Duration: ").foregroundColor(.blue)
+                    + Text(tvShow.durationText)
+                }.font(.subheadline)
+            } else {
+                HStack {
+                    Text("Genre: ").foregroundColor(.blue)
+                    + Text(tvShow.genreText)
+                    + Text(" · Duration: ").foregroundColor(.blue)
+                    + Text(tvShow.durationText)
+                }.font(.subheadline)
+            }
+
+            Text("Synopsis:")
+                .font(.caption)
+                .padding(.top, 5)
+
             Text(tvShow.overview)
                 .foregroundColor(.blue)
-        }.padding(.vertical)
+                .padding(.top, -8)
+        }
     }
-    
-    private var tvShowGenreYearDurationText: String {
-        "\(tvShow.genreText) · \(tvShow.airText) · \(tvShow.durationText)"
+
+    private var formattedAirsInfoText: String? {
+        guard let airsTime = airsTime, let airsDays = airsDays, !airsDays.isEmpty else {
+            return nil
+        }
+
+        let formattedTime = DateUtils.convertTo12HourFormat(airsTime) ?? airsTime
+        return "\(airsDays.joined(separator: ", ")) at \(formattedTime)"
     }
-    
+
+    private func loadData() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            self.isDataLoaded = true
+        }
+    }
+
     private var tvShowCastSection: some View {
         HStack(alignment: .top, spacing: 4) {
             if let cast = tvShow.cast, !cast.isEmpty {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Starring:").font(.headline)
-                    ForEach(cast.prefix(9)) { Text($0.name)
-                        + Text(" as ") +
-                        Text("'\($0.character)'")
-                            .foregroundColor(.blue)
+                    ForEach(cast.prefix(9)) {
+                        Text($0.name).foregroundColor(.blue)
+                        + Text(" as ")
+                        + Text("\"")
+                        + Text("\($0.character)").foregroundColor(.blue)
+                        + Text("\"")
                     }
-                }.frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
-                
+                }
+                .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+
                 Spacer()
             }
-            
-            if let crew = tvShow.crew, !crew.isEmpty {
+
+            if let crew = tvShow.crew, !crew.isEmpty, hasProducersOrExecutiveProducers(crew: crew) {
                 VStack(alignment: .leading, spacing: 4) {
                     if let producers = tvShow.producers, !producers.isEmpty {
                         Text("Producer(s):").font(.headline)
@@ -172,7 +242,7 @@ struct TVShowDetailListView: View {
                                 .foregroundColor(.blue)
                         }
                     }
-                    
+
                     if let eProducers = tvShow.eProducers, !eProducers.isEmpty {
                         Text("Executive Producer(s):").font(.headline)
                             .padding(.top)
@@ -180,20 +250,37 @@ struct TVShowDetailListView: View {
                                 .foregroundColor(.blue)
                         }
                     }
-                }.frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                }
+                .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
             }
-        }.padding(.vertical)
+        }
+        .padding(.vertical)
     }
-    
+
+    private func hasProducersOrExecutiveProducers(crew: [TVShowCrew]) -> Bool {
+        let producersExist = tvShow.producers != nil && !tvShow.producers!.isEmpty
+        let executiveProducersExist = tvShow.eProducers != nil && !tvShow.eProducers!.isEmpty
+        return producersExist || executiveProducersExist
+    }
+
     @ViewBuilder
     private var tvShowSeasonsSection: some View {
         if let seasons = tvShow.seasons, !seasons.isEmpty {
             Section(header: Text("Seasons:").font(.headline)) {
                 ForEach(seasons) { season in
-                    NavigationLink(destination: EpisodesListView(tvShowID: tvShow.id, tvShowName: tvShow.name, season: season).environmentObject(watchlistState)) {
+                    NavigationLink(destination: EpisodesListView(tvShowID: tvShow.id, tvShowName: tvShow.name, season: season, airsTime: airsTime, airsDays: airsDays).environmentObject(watchlistState)) {
                         HStack {
                             Text(season.name).foregroundColor(.blue)
                             Spacer()
+
+                            if watchlistState.watchedEpisodesCountForSeason(tvShowID: tvShow.id, seasonNumber: season.seasonNumber) == season.episodeCount {
+                                Text("Watched!")
+                                    .font(.caption)
+                                    .padding(EdgeInsets(top: 2, leading: 5, bottom: 2, trailing: 5))
+                                    .background(Color.blue.opacity(0.8))
+                                    .foregroundColor(.white)
+                                    .cornerRadius(5)
+                            }
                             Text("\(season.episodeCount) episodes")
                                 .foregroundColor(.secondary)
                         }
@@ -202,13 +289,14 @@ struct TVShowDetailListView: View {
             }
         }
     }
-    
+
+
     @ViewBuilder
     private var tvShowTrailerSection: some View {
         if let trailers = tvShow.youtubeTrailers, !trailers.isEmpty {
             VStack(alignment: .leading) {
                 Text("Trailers").font(.headline)
-                
+
                 ScrollView(.horizontal, showsIndicators: false) {
                     LazyHStack(spacing: 16) {
                         ForEach(trailers) { trailer in
@@ -228,46 +316,17 @@ struct TVShowDetailListView: View {
                                             .foregroundColor(Color(UIColor.systemIndigo))
                                     }
                                     Text(trailer.name)
-                                        .foregroundColor(.accentColor)
+                                        .foregroundColor(.blue)
                                         .font(.caption)
                                         .lineLimit(1)
                                         .frame(width: 120, alignment: .center)
                                 }
-                            }.padding(.vertical, 8)
+                            }
                         }
                     }
                 }
-            }.padding(.bottom)
-        }
-    }
-}
-
-struct TVShowSeriesImagesView: View {
-    let seriesImages: TVShowSeriesImages
-
-    var body: some View {
-        VStack {
-            Text("Backdrops")
-            ScrollView(.horizontal, showsIndicators: false) {
-                LazyHStack(spacing: 16) {
-                    ForEach(seriesImages.backdrops ?? [], id: \.filePath) { imageDetail in
-                        RemoteImage(url: imageDetail.imageURL, placeholder: nil)
-                            .frame(width: 120, height: 70)
-                            .clipped()
-                    }
-                }
             }
-
-            Text("Posters")
-            ScrollView(.horizontal, showsIndicators: false) {
-                LazyHStack(spacing: 16) {
-                    ForEach(seriesImages.posters ?? [], id: \.filePath) { imageDetail in
-                        RemoteImage(url: imageDetail.imageURL, placeholder: nil)
-                            .frame(width: 120, height: 70)
-                            .clipped()
-                    }
-                }
-            }
+            .listRowSeparator(.hidden)
         }
     }
 }
@@ -275,7 +334,6 @@ struct TVShowSeriesImagesView: View {
 struct TVShowBackdropsView: View {
     let backdrops: [TVShowSeriesImages.ImageDetail]
     @State private var currentIndex: Int = 0
-    @State private var timer: Timer? = nil
 
     var body: some View {
         VStack {
@@ -284,27 +342,15 @@ struct TVShowBackdropsView: View {
                     .frame(width: UIScreen.main.bounds.width, height: 250)
                     .clipped()
             }
-        }
-        .onAppear {
-            startTimer()
-        }
-        .onDisappear {
-            stopTimer()
-        }
-    }
-
-    func startTimer() {
-        timer?.invalidate()
-        timer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { _ in
-            withAnimation {
-                currentIndex = (currentIndex + 1) % backdrops.count
+        }.onAppear {
+            SharedTimer.shared.startTimer {
+                withAnimation {
+                    currentIndex = (currentIndex + 1) % backdrops.count
+                }
             }
+        }.onDisappear {
+            SharedTimer.shared.stopTimer()
         }
-    }
-
-    func stopTimer() {
-        timer?.invalidate()
-        timer = nil
     }
 }
 
@@ -317,11 +363,5 @@ struct TVShowDetailView_Previews: PreviewProvider {
             )
             .environmentObject(WatchlistState())
         }
-    }
-}
-
-extension Collection {
-    subscript(safe index: Index) -> Element? {
-        indices.contains(index) ? self[index] : nil
     }
 }

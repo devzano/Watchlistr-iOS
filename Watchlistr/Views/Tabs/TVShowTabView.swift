@@ -8,43 +8,57 @@
 import SwiftUI
 
 struct TVShowTabView: View {
+    @EnvironmentObject var tabBarVisibilityManager: TabBarVisibilityManager
+    @StateObject var tvShowSearchState = TVShowSearchState()
+    @StateObject var tvShowHomeState = TVShowHomeState()
     @State private var isSearching = false
-    @ObservedObject var tvShowSearchState = TVShowSearchState()
-    @StateObject private var tvShowHomeState = TVShowHomeState()
-    
+    @FocusState private var isSearchFieldFocused: Bool
+
     var body: some View {
         NavigationView {
-            VStack {
-                if isSearching {
-                    TVShowSearchView(tvshowSearchState: tvShowSearchState)
-                        .transition(.move(edge: .top))
-                } else {
-                    TVShowListView(tvshowHomeState: tvShowHomeState)
-                }
-            }
+            mainContentView
+//                .onAppear {
+//                    tabBarVisibilityManager.showTabBar()
+//                }
             .toolbar {
-                ToolbarItem(placement: .principal) {
-                    if isSearching {
-                        SearchBarView(placeholder: "search tv show(s)", text: $tvShowSearchState.query)
-                            .animation(.default, value: isSearching)
-                            .foregroundColor(.blue)
-                    } else {
-                        Text("TV Shows")
-                            .font(.largeTitle.bold())
-                    }
-                }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: {
-                        isSearching.toggle()
-                    }) {
-                        Image(systemName: isSearching ? "tv" : "magnifyingglass")
-                    }
-                }
-            }.navigationBarTitleDisplayMode(.inline)
+                ToolbarItem(placement: .principal) { principalToolbarView }
+                ToolbarItem(placement: .navigationBarTrailing) { trailingToolbarButton }
+            }
+            .navigationBarTitleDisplayMode(.inline)
+        }
+    }
+    
+    @ViewBuilder
+    private var mainContentView: some View {
+        if isSearching {
+            TVShowSearchView(tvShowSearchState: tvShowSearchState)
+                .transition(.move(edge: .top))
+        } else {
+            TVShowListView(tvshowHomeState: tvShowHomeState)
+        }
+    }
+    
+    @ViewBuilder
+    private var principalToolbarView: some View {
+        if isSearching {
+            SearchBarView(placeholder: "search tv show(s)", text: $tvShowSearchState.query)
+                .focused($isSearchFieldFocused)
+                .animation(.default, value: isSearching)
+        } else {
+            Text("TV Shows")
+                .font(.largeTitle.bold())
+        }
+    }
+    
+    private var trailingToolbarButton: some View {
+        Button(action: {
+            isSearching.toggle()
+            isSearchFieldFocused = true
+        }) {
+            Image(systemName: isSearching ? "tv" : "magnifyingglass")
         }
     }
 }
-
 
 struct TVShowListView: View {
     @ObservedObject var tvshowHomeState: TVShowHomeState
@@ -54,12 +68,13 @@ struct TVShowListView: View {
             ForEach(tvshowHomeState.sections) { section in
                 TVShowThumbnailCarouselView(name: section.name, tvShows: section.tvshows, thumbnailType: section.thumbnailType)
             }
-            .listRowInsets(.init(top: 8, leading: 0, bottom: 8, trailing: 0))
+            .listRowInsets(.init(top: 5, leading: 0, bottom: 0, trailing: 0))
+//            .listRowInsets(.init(top: 5, leading: 0, bottom: 25, trailing: 0))
             .listRowSeparator(.hidden)
         }
-        .task {loadTVShows(invalidateCache: false)}
-        .refreshable {loadTVShows(invalidateCache: true)}
-        .overlay(DataFetchPhaseOverlayView(phase: tvshowHomeState.phase, retryAction: {loadTVShows(invalidateCache: true)}))
+        .task { loadTVShows(invalidateCache: false) }
+        .refreshable { loadTVShows(invalidateCache: true) }
+        .overlay(DataFetchPhaseOverlayView(phase: tvshowHomeState.phase, retryAction: { loadTVShows(invalidateCache: true) }))
         .listStyle(.plain)
     }
 
@@ -69,26 +84,33 @@ struct TVShowListView: View {
 }
 
 struct TVShowSearchView: View {
-    @StateObject var tvshowSearchState = TVShowSearchState()
+//    @EnvironmentObject var tabBarVisibilityManager: TabBarVisibilityManager
+    @StateObject var tvShowSearchState = TVShowSearchState()
 
     var body: some View {
         List {
-            ForEach(tvshowSearchState.tvShows) { tvshow in
+            ForEach(tvShowSearchState.tvShows) { tvshow in
                 NavigationLink(destination: TVShowDetailView(tvShowID: tvshow.id, tvShowName: tvshow.name)) {
                     TVShowRowView(tvShow: tvshow).padding(.vertical, 8)
                 }
             }
         }
         .overlay(overlayView)
-        .onAppear {tvshowSearchState.startObserve()}
+        .onAppear {
+            tvShowSearchState.startObserve()
+//            tabBarVisibilityManager.hideTabBar()
+        }
+//        .onDisappear {
+//            tabBarVisibilityManager.showTabBar()
+//        }
         .listStyle(.plain)
     }
 
     @ViewBuilder
     private var overlayView: some View {
-        switch tvshowSearchState.phase {
+        switch tvShowSearchState.phase {
         case .empty:
-            if tvshowSearchState.trimmedQuery.isEmpty {
+            if tvShowSearchState.trimmedQuery.isEmpty {
                 EmptyPlaceholderView(text: "", image: Image(systemName: "magnifyingglass"))
             } else {
                 ProgressView()
@@ -98,7 +120,7 @@ struct TVShowSearchView: View {
         case .failure(let error):
             RetryView(text: error.localizedDescription) {
                 Task {
-                    await tvshowSearchState.search(query: tvshowSearchState.query)
+                    await tvShowSearchState.search(query: tvShowSearchState.query)
                 }
             }
         default:
@@ -109,45 +131,77 @@ struct TVShowSearchView: View {
 
 struct TVShowRowView: View {
     let tvShow: TVShow
+    static let thumbnailSize: CGSize = CGSize(width: 61, height: 92)
 
     var body: some View {
         HStack(alignment: .top, spacing: 16) {
             TVShowThumbnailView(tvShow: tvShow, thumbnailType: .poster(showName: false))
-                .frame(width: 61, height: 92)
-            VStack(alignment: .leading) {
-                Text(tvShow.name)
-                    .font(.headline)
-                    .foregroundColor(.blue)
-                if !tvShow.ratingText.isEmpty {
-                    HStack {
-                        Text(tvShow.ratingText)
-                            .font(.system(size: 16, weight: .bold))
-                            .foregroundColor(.white)
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 5)
-                            .background(
-                                LinearGradient(gradient: Gradient(colors: [.purple, .blue]), startPoint: .leading, endPoint: .trailing)
-                            )
-                            .cornerRadius(10)
-                            .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
-                        
-                        Text(tvShow.airText)
-                            .font(.subheadline)
-                            .foregroundColor(.blue)
-                    }
-                }
-                Text(tvShow.overview)
-                    .font(.subheadline)
-                    .lineLimit(3)
-            }
+                .frame(width: Self.thumbnailSize.width, height: Self.thumbnailSize.height)
+            tvShowDetails
         }
     }
+    
+    @ViewBuilder
+    private var tvShowDetails: some View {
+        VStack(alignment: .leading) {
+            Text(tvShow.name)
+                .font(.headline)
+                .foregroundColor(.blue)
+            if !tvShow.ratingText.isEmpty {
+                ratingAndAirView
+            }
+            Text(tvShow.overview)
+                .font(.subheadline)
+                .lineLimit(3)
+                .foregroundColor(.indigo)
+        }
+    }
+    
+    private var ratingAndAirView: some View {
+        HStack {
+            if !tvShow.airText.isEmpty {
+                Text(tvShow.airText)
+                    .font(.subheadline)
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 5)
+                    .background(
+                        RoundedRectangle(cornerRadius: 10).fill(Color.clear)
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(LinearGradient(gradient: Gradient(colors: [.blue, .indigo]), startPoint: .leading, endPoint: .trailing), lineWidth: 2)
+                    )
+                    .shadow(radius: 3)
+            }
+
+            Spacer()
+
+            Text(tvShow.ratingText)
+                .font(.system(size: 16, weight: .bold))
+                .foregroundColor(.white)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 5)
+                .background(
+                    RoundedRectangle(cornerRadius: 10).fill(Color.clear)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(LinearGradient(gradient: Gradient(colors: [.blue, .indigo]), startPoint: .leading, endPoint: .trailing), lineWidth: 2)
+                )
+                .shadow(radius: 3)
+        }
+    }
+
 }
 
 struct TVShowTabView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
             TVShowTabView()
+                .environmentObject(AuthViewModel())
+                .environmentObject(WatchlistState())
+                .environmentObject(TabBarVisibilityManager())
         }
     }
 }

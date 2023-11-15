@@ -8,29 +8,46 @@
 import SwiftUI
 
 struct ContentView: View {
-    @EnvironmentObject var vm: AuthViewModel
-    @EnvironmentObject var watchlistState: WatchlistState
-    
+    @EnvironmentObject var auth: AuthViewModel
+    @EnvironmentObject var tabBarVisibilityManager: TabBarVisibilityManager
+    @State private var selectedTab: Int = 1
+    @State private var movieTabView = MovieTabView()
+    @State private var profileTabView = ProfileTabView()
+    @State private var tvShowTabView = TVShowTabView()
+
     var body: some View {
         Group {
-            if vm.userSession != nil {
-                TabView {
-                    MovieTabView()
-                        .tabItem {Label("Movies", systemImage: "film")}
+            if auth.userSession != nil {
+                TabView(selection: $selectedTab) {
+                    movieTabView
+                        .tabItem {
+                            if !tabBarVisibilityManager.isTabBarHidden {
+                                Label("Movies", systemImage: "film")
+                            }
+                        }
                         .tag(0)
-                    
-                    TVShowTabView()
-                        .tabItem {Label("TV Shows", systemImage: "tv")}
+
+                    profileTabView
+                        .tabItem {
+                            if !tabBarVisibilityManager.isTabBarHidden {
+                                Label("Profile", systemImage: "person.circle")
+                            }
+                        }
                         .tag(1)
-                    
-                    ProfileTabView()
-                        .tabItem{Label("Profile", systemImage: "person")}
+
+                    tvShowTabView
+                        .tabItem {
+                            if !tabBarVisibilityManager.isTabBarHidden {
+                                Label("TV Shows", systemImage: "tv")
+                            }
+                        }
                         .tag(2)
                 }
             } else {
                 LoginView()
             }
-        }.navigationViewStyle(StackNavigationViewStyle())
+        }
+        .navigationViewStyle(StackNavigationViewStyle())
     }
 }
 
@@ -39,5 +56,18 @@ struct ContentView_Previews: PreviewProvider {
         ContentView()
             .environmentObject(AuthViewModel())
             .environmentObject(WatchlistState())
+            .environmentObject(TabBarVisibilityManager())
+    }
+}
+
+class TabBarVisibilityManager: ObservableObject {
+    @Published var isTabBarHidden: Bool = false
+
+    func hideTabBar() {
+        isTabBarHidden = true
+    }
+
+    func showTabBar() {
+        isTabBarHidden = false
     }
 }

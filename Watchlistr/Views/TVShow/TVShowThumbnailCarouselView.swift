@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct TVShowThumbnailCarouselView: View {
-    
+    @Environment(\.colorScheme) var colorScheme
     let name: String
     let tvShows: [TVShow]
     var thumbnailType : TVShowThumbnailType = .poster()
@@ -16,10 +16,11 @@ struct TVShowThumbnailCarouselView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text(name)
-                .font(.title)
+                .font(.largeTitle)
                 .fontWeight(.bold)
                 .padding(.horizontal)
                 .foregroundColor(.blue)
+                .shadow(radius: 3)
             
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(alignment: .top, spacing: 16) {
@@ -27,14 +28,14 @@ struct TVShowThumbnailCarouselView: View {
                         NavigationLink(destination: TVShowDetailView(tvShowID: tvShow.id, tvShowName: tvShow.name)){
                             TVShowThumbnailView(tvShow: tvShow, thumbnailType: thumbnailType)
                                 .tvShowThumbnailViewFrame(thumbnailType: thumbnailType)
-                        }
-                        .buttonStyle(.plain)
+                                .shadow(radius: 6)
+                        }.buttonStyle(.plain)
                     }
                 }
                 .padding(.horizontal)
                 .padding(.vertical, 8)
             }
-        }
+        }.background(LinearGradient(gradient: Gradient(colors: colorScheme == .dark ? [Color.black.opacity(0.7), Color.gray.opacity(0.3)] : [Color.gray.opacity(0.3), Color.black.opacity(0.7)]), startPoint: .top, endPoint: .bottom)).cornerRadius(15)
     }
 }
 

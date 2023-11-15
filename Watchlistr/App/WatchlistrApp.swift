@@ -8,25 +8,14 @@
 import SwiftUI
 import Firebase
 
-struct DefaultTextColor: ViewModifier {
-    func body(content: Content) -> some View {
-        content
-            .foregroundColor(.indigo)
-    }
-}
-
-extension View {
-    func defaultTextColor() -> some View {
-        self.modifier(DefaultTextColor())
-    }
-}
-
 @main
 struct WatchlistrApp: App {
-    @StateObject var vm = AuthViewModel()
+    @StateObject var auth = AuthViewModel()
     @StateObject var watchlistState = WatchlistState()
     @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
-    
+    var tabBarVisibilityManager = TabBarVisibilityManager()
+    let deviceType = UIDevice().type
+
     init() {
         UITabBar.appearance().unselectedItemTintColor = .systemIndigo
     }
@@ -34,8 +23,12 @@ struct WatchlistrApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environmentObject(vm)
+                .onAppear {
+                    print("Running on: \(deviceType)")
+                }
+                .environmentObject(auth)
                 .environmentObject(watchlistState)
+                .environmentObject(tabBarVisibilityManager)
                 .defaultTextColor()
                 .onReceive(NotificationCenter.default.publisher(for: .userDidLogOut)) { _ in
                     watchlistState.reset()
@@ -48,11 +41,19 @@ struct WatchlistrApp: App {
 }
 
 extension WatchlistrApp {
-    final class AppDelegate: NSObject, UIApplicationDelegate {
+    final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
         func application(_ application: UIApplication,
                          didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
             FirebaseApp.configure()
+            
+            let center = UNUserNotificationCenter.current()
+            center.delegate = self
+            
             return true
+        }
+        
+        func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+            completionHandler([.banner, .sound])
         }
     }
 }

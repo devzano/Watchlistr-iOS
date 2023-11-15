@@ -5,27 +5,25 @@
 //  Created by Ruben Manzano on 8/14/23.
 //
 
+import Foundation
 import SwiftUI
 
 struct ChangePassView: View {
+    @EnvironmentObject var auth: AuthViewModel
+    @EnvironmentObject var tabBarVisibilityManager: TabBarVisibilityManager
     @State private var currPass = ""
     @State private var newPass = ""
     @State private var confNewPass = ""
     @State private var showPasswordRequirements = false
-    @EnvironmentObject var vm: AuthViewModel
+    @State private var isChangingPassword = false
     
     var body: some View {
         ZStack {
-            backgroundImage
+            BackgroundImageView()
             VStack {
-                Image("Logo")
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 100, height: 120)
-                    .padding(.vertical, 50)
-                
+                Spacer()
                 VStack(spacing: 24) {
-                    InputView(
+                    AuthInputView(
                         text: $currPass,
                         title: "Current Password:",
                         placeholder: "enter current password",
@@ -33,7 +31,7 @@ struct ChangePassView: View {
                     )
                     
                     ZStack(alignment: .trailing) {
-                        InputView(
+                        AuthInputView(
                             text: $newPass,
                             title: "New Password:",
                             placeholder: "enter new password",
@@ -79,7 +77,7 @@ struct ChangePassView: View {
                         }
                     }
                     ZStack(alignment: .trailing) {
-                        InputView(
+                        AuthInputView(
                             text: $confNewPass,
                             title: "Confirm New Password:",
                             placeholder: "confirm new password",
@@ -100,20 +98,27 @@ struct ChangePassView: View {
                     }
                 }
                 
+                if isChangingPassword {
+                    ActivityIndicatorView()
+                        .progressViewStyle(CircularProgressViewStyle())
+                }
+                
                 ButtonView(action: {
+                    isChangingPassword = true
                     Task {
                         do {
-                            try await vm.changePass(currentPassword: currPass, newPassword: newPass)
+                            try await auth.changePass(currentPassword: currPass, newPassword: newPass)
                             currPass = ""
                             newPass = ""
                             confNewPass = ""
                         } catch {
                             print("DEBUG: Failed to change password with error \(error.localizedDescription)")
                         }
+                        isChangingPassword = false
                     }
                 }, label: "Change Password", imageName: "arrow.right")
-                .disabled(!formIsValid)
-                .opacity(formIsValid ? 1.0 : 0.5)
+                .disabled(!formIsValid || isChangingPassword)
+                .opacity((formIsValid && !isChangingPassword) ? 1.0 : 0.5)
                 .padding(.top, 24)
                 
                 Spacer()
@@ -122,29 +127,7 @@ struct ChangePassView: View {
             .padding(.top, 12)
         }
         .onAppear {
-            startImageTimer()
-        }
-    }
-    
-    private var backgroundImage: some View {
-        Image(backgroundImages[currentImageIndex])
-            .resizable()
-            .aspectRatio(contentMode: .fill)
-            .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-            .clipped()
-            .opacity(0.15)
-            .edgesIgnoringSafeArea(.all)
-    }
-        
-    private let backgroundImages = ["BackgroundView", "BackgroundView1", "BackgroundView2"]
-    @State private var currentImageIndex = 0
-    private let imageChangeInterval: TimeInterval = 10
-        
-    private func startImageTimer() {
-        _ = Timer.scheduledTimer(withTimeInterval: imageChangeInterval, repeats: true) { timer in
-            withAnimation {
-                currentImageIndex = (currentImageIndex + 1) % backgroundImages.count
-            }
+            tabBarVisibilityManager.hideTabBar()
         }
     }
 }
@@ -154,11 +137,11 @@ extension ChangePassView: AuthFormProtocol {
     var formIsValid: Bool {
         let capitalLetterCharacterSet = CharacterSet.uppercaseLetters
         let numberCharacterSet = CharacterSet.decimalDigits
-        let specialCharacterSet = CharacterSet(charactersIn: "!@#$%^&*()_-+=<>?/")
+        let specialCharacterSet = CharacterSet(charactersIn: "!@#$%^&*()_-+=[]{}|:;\"'<>,.?/~`")
         
         return !currPass.isEmpty
         && !newPass.isEmpty
-        && newPass.count > 5
+        && newPass.count >= 6
         && newPass.rangeOfCharacter(from: capitalLetterCharacterSet) != nil
         && newPass.rangeOfCharacter(from: numberCharacterSet) != nil
         && newPass.rangeOfCharacter(from: specialCharacterSet) != nil
@@ -169,5 +152,8 @@ extension ChangePassView: AuthFormProtocol {
 struct ChangePassView_Previews: PreviewProvider {
     static var previews: some View {
         ChangePassView()
+            .environmentObject(AuthViewModel())
+            .environmentObject(WatchlistState())
+            .environmentObject(TabBarVisibilityManager())
     }
 }

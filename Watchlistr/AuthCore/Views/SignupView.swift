@@ -8,39 +8,39 @@
 import SwiftUI
 
 struct SignupView: View {
+    @Environment(\.dismiss) var dismiss
+    @EnvironmentObject var auth: AuthViewModel
     @State private var email = ""
     @State private var username = ""
     @State private var password = ""
     @State private var confPass = ""
     @State private var showPasswordRequirements = false
     @State private var isSigningUp = false
-    @Environment(\.dismiss) var dismiss
-    @EnvironmentObject var vm: AuthViewModel
     
     var body: some View {
         ZStack {
-            backgroundImage
+            BackgroundImageView()
             VStack {
-                VStack(spacing: 8) {
+                VStack {
                     welcomeMessage
-                    Image("Logo")
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 100, height: 120)
-                }.padding(.vertical, 50)
+                        .padding(.top, 100)
+                }
+                
+                Spacer()
+                
                 VStack(spacing: 24) {
-                    InputView(
+                    AuthInputView(
                         text: $username,
                         title: "Username:",
                         placeholder: "username"
                     ).autocapitalization(.none)
-                    InputView(
+                    AuthInputView(
                         text: $email,
                         title: "Email Address:",
                         placeholder: "name@example.com"
                     ).autocapitalization(.none)
                     ZStack(alignment: .trailing) {
-                        InputView(
+                        AuthInputView(
                             text: $password,
                             title: "Password:",
                             placeholder: "enter a password",
@@ -60,10 +60,10 @@ struct SignupView: View {
                         if showPasswordRequirements {
                             VStack(alignment: .leading, spacing: 8) {
                                 ForEach([
-                                    "• At least 6 characters",
-                                    "• A capital letter",
-                                    "• 1 number",
-                                    "• 1 special character"
+                                    "At least 6 characters",
+                                    "A capital letter",
+                                    "1 number",
+                                    "1 special character"
                                 ], id: \.self) { requirement in
                                     HStack(alignment: .center, spacing: 6) {
                                         RoundedRectangle(cornerRadius: 6)
@@ -86,7 +86,7 @@ struct SignupView: View {
                         }
                     }
                     ZStack(alignment: .trailing) {
-                        InputView(
+                        AuthInputView(
                             text: $confPass,
                             title: "Confirm Password:",
                             placeholder: "confirm password",
@@ -120,31 +120,30 @@ struct SignupView: View {
                 .padding(.horizontal)
                 .padding(.top, 12)
                 
+                if isSigningUp {
+                    ActivityIndicatorView()
+                        .progressViewStyle(CircularProgressViewStyle())
+                }
+                
                 ButtonView(action: {
                     isSigningUp = true
                     Task {
                         do {
-                            try await vm.createUser(withEmail: email, password: password, username: username)
+                            try await auth.createUser(withEmail: email, password: password, username: username)
                         } catch {
                             isSigningUp = false
                         }
                         isSigningUp = false
                     }
                 }, label: "Signup", imageName: "arrow.right")
-                .disabled(!formIsValid)
-                .opacity(formIsValid && !isSigningUp ? 1.0 : 0.5)
+                .disabled(!formIsValid || isSigningUp)
+                .opacity((formIsValid && !isSigningUp) ? 1.0 : 0.5)
                 .padding(.top, 24)
                 
-                if isSigningUp {
-                    ActivityIndicatorView()
-                    Text("Signing Up...")
-                }
-                
                 Spacer()
+                AppLogosByView()
+                    .padding(.bottom, 30)
             }
-        }
-        .onAppear {
-            startImageTimer()
         }
     }
     
@@ -152,51 +151,32 @@ struct SignupView: View {
         Text("Welcome to Watchlistr!")
             .font(.largeTitle)
     }
-    
-    private var backgroundImage: some View {
-        Image(backgroundImages[currentImageIndex])
-            .resizable()
-            .aspectRatio(contentMode: .fill)
-            .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-            .clipped()
-            .opacity(0.15)
-            .edgesIgnoringSafeArea(.all)
-    }
-        
-    private let backgroundImages = ["BackgroundView", "BackgroundView1", "BackgroundView2"]
-    @State private var currentImageIndex = 0
-    private let imageChangeInterval: TimeInterval = 10
-        
-    private func startImageTimer() {
-        _ = Timer.scheduledTimer(withTimeInterval: imageChangeInterval, repeats: true) { timer in
-            withAnimation {
-                currentImageIndex = (currentImageIndex + 1) % backgroundImages.count
-            }
-        }
-    }
 }
 
 extension SignupView: AuthFormProtocol {
     var formIsValid: Bool {
+        let emailPattern = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
+        let emailPredicate = NSPredicate(format:"SELF MATCHES %@", emailPattern)
         let capitalLetterCharacterSet = CharacterSet.uppercaseLetters
         let numberCharacterSet = CharacterSet.decimalDigits
-        let specialCharacterSet = CharacterSet(charactersIn: "!@#$%^&*()_-+=<>?/")
+        let specialCharacterSet = CharacterSet(charactersIn: "!@#$%^&*()_-+=[]{}|:;\"'<>,.?/~`")
         
-        return !email.isEmpty
-        && email.contains("@")
-        && email.contains(".")
-        && !password.isEmpty
-        && password.count > 5
-        && password.rangeOfCharacter(from: capitalLetterCharacterSet) != nil
-        && password.rangeOfCharacter(from: numberCharacterSet) != nil
-        && password.rangeOfCharacter(from: specialCharacterSet) != nil
-        && password == confPass
-        && !username.isEmpty
+        return emailPredicate.evaluate(with: email)
+            && !password.isEmpty
+            && password.count >= 6
+            && password.rangeOfCharacter(from: capitalLetterCharacterSet) != nil
+            && password.rangeOfCharacter(from: numberCharacterSet) != nil
+            && password.rangeOfCharacter(from: specialCharacterSet) != nil
+            && password == confPass
+            && !username.isEmpty
     }
 }
 
 struct SignupView_Previews: PreviewProvider {
     static var previews: some View {
         SignupView()
+            .environmentObject(AuthViewModel())
+            .environmentObject(WatchlistState())
+            .environmentObject(TabBarVisibilityManager())
     }
 }

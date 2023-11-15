@@ -8,30 +8,24 @@
 import SwiftUI
 
 struct ForgotPassView: View {
+    @Environment(\.dismiss) var dismiss
+    @EnvironmentObject var auth: AuthViewModel
     @State private var email = ""
     @State private var isSendingEmail = false
-
-    @Environment(\.dismiss) var dismiss
-    @EnvironmentObject var vm: AuthViewModel
     
     var body: some View {
         ZStack {
-            backgroundImage
+            BackgroundImageView()
             VStack {
-                VStack(spacing: 8) {
+                VStack {
                     welcomeMessage
-                    Button(action: {
-                        dismiss()
-                    }) {
-                        Image("Logo")
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: 100, height: 120)
-                    }
-                }.padding(.vertical, 50)
+                        .padding(.top, 100)
+                }
+                
+                Spacer()
                 
                 VStack(spacing: 24) {
-                    InputView(
+                    AuthInputView(
                         text: $email,
                         title: "Email Address",
                         placeholder: "name@example.com"
@@ -51,52 +45,34 @@ struct ForgotPassView: View {
                 .padding(.horizontal)
                 .padding(.top, 12)
                 
+                if isSendingEmail {
+                    ActivityIndicatorView()
+                        .progressViewStyle(CircularProgressViewStyle())
+                }
+                
                 ButtonView(action: {
                     isSendingEmail = true
                     Task {
-                        await vm.sendResetPasswordEmail(forEmail: email)
+                        await auth.sendResetPasswordEmail(forEmail: email)
                         isSendingEmail = false
                         email = ""
                         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
                     }
                 }, label: "Send Link", imageName: "arrow.right")
-                .disabled(!formIsValid)
-                .opacity(formIsValid ? 1.0 : 0.5)
+                .disabled(!formIsValid || isSendingEmail)
+                .opacity((formIsValid && !isSendingEmail) ? 1.0 : 0.5)
                 .padding(.top, 24)
                 
                 Spacer()
-            }.padding(.bottom, 30)
-        }
-        .onAppear {
-            startImageTimer()
+                AppLogosByView()
+                    .padding(.bottom, 30)
+            }
         }
     }
     
     private var welcomeMessage: some View {
         Text("Welcome to Watchlistr!")
             .font(.largeTitle)
-    }
-    
-    private var backgroundImage: some View {
-        Image(backgroundImages[currentImageIndex])
-            .resizable()
-            .aspectRatio(contentMode: .fill)
-            .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-            .clipped()
-            .opacity(0.15)
-            .edgesIgnoringSafeArea(.all)
-    }
-        
-    private let backgroundImages = ["BackgroundView", "BackgroundView1", "BackgroundView2"]
-    @State private var currentImageIndex = 0
-    private let imageChangeInterval: TimeInterval = 10
-        
-    private func startImageTimer() {
-        _ = Timer.scheduledTimer(withTimeInterval: imageChangeInterval, repeats: true) { timer in
-            withAnimation {
-                currentImageIndex = (currentImageIndex + 1) % backgroundImages.count
-            }
-        }
     }
 }
 
@@ -111,5 +87,8 @@ extension ForgotPassView: AuthFormProtocol {
 struct ForgotPassView_Previews: PreviewProvider {
     static var previews: some View {
         ForgotPassView()
+            .environmentObject(AuthViewModel())
+            .environmentObject(WatchlistState())
+            .environmentObject(TabBarVisibilityManager())
     }
 }

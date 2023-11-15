@@ -32,20 +32,37 @@ struct MovieDetailView: View {
                         WatchProvidersView(watchProviders: providers)
                             .listRowSeparator(.hidden)
                         Spacer()
-                        if !movie.ratingText.isEmpty {
+                        if movie.ratingText != "NR" {
                             VStack(alignment: .center) {
                                 Text("Rating")
                                     .font(.headline)
-                                Text("\(movie.ratingText)")
-                                    .font(.system(size: 22, weight: .bold))
-                                    .foregroundColor(.white)
-                                    .padding(.horizontal, 10)
-                                    .padding(.vertical, 5)
-                                    .background(
-                                        LinearGradient(gradient: Gradient(colors: [.purple, .blue]), startPoint: .leading, endPoint: .trailing)
+                                Text(movie.ratingText)
+                                    .font(.system(size: 24, weight: .bold))
+                                    .foregroundColor(.primary)
+                                    .padding(.horizontal, 17)
+                                    .padding(.vertical, 10)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .stroke(LinearGradient(gradient: Gradient(colors: [.blue, .indigo]), startPoint: .leading, endPoint: .trailing), lineWidth: 3)
                                     )
                                     .cornerRadius(10)
-                                    .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
+                                    .shadow(color: .black.opacity(0.3), radius: 3, x: 0, y: 2)
+                            }
+                        } else {
+                            VStack(alignment: .center) {
+                                Text("Rating")
+                                    .font(.headline)
+                                Text("NR")
+                                    .font(.system(size: 24, weight: .bold))
+                                    .foregroundColor(.primary)
+                                    .padding(.horizontal, 17)
+                                    .padding(.vertical, 10)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 10)
+                                            .stroke(LinearGradient(gradient: Gradient(colors: [.blue, .indigo]), startPoint: .leading, endPoint: .trailing), lineWidth: 2)
+                                    )
+                                    .cornerRadius(10)
+                                    .shadow(color: .black.opacity(0.3), radius: 3, x: 0, y: 2)
                             }
                         }
                     }
@@ -67,7 +84,7 @@ struct MovieDetailView: View {
         .toolbar {
             ToolbarItem(placement: .principal) {
                 Text(movieTitle)
-                    .foregroundColor(.blue)
+                    .foregroundColor(.indigo)
             }
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: {
@@ -82,6 +99,7 @@ struct MovieDetailView: View {
                             .foregroundColor(.green)
                     } else {
                         Image(systemName: "plus.circle")
+                            .foregroundColor(.blue)
                     }
                 }
             }
@@ -90,7 +108,11 @@ struct MovieDetailView: View {
 
     private func loadMovie() {
         Task {
-            await self.movieDetailState.loadMovie(id: self.movieID)
+            if case .success(_) = movieDetailState.phase {
+                return
+            }
+
+            await movieDetailState.loadMovie(id: movieID)
             await movieImagesState.loadMovieImages(id: movieID)
             await movieWatchProviderState.loadMovieWatchProviders(forMovie: movieID)
         }
@@ -130,17 +152,24 @@ struct MovieDetailListView: View {
     }
     
     private var movieDescriptionSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text(movieGenreYearDurationText)
-                .font(.headline)
+        VStack(alignment: .leading, spacing: 10) {
+            HStack {
+                Text("Genre: ").foregroundColor(.blue)
+                + Text(movie.genreText)
+                + Text(" · Released: ").foregroundColor(.blue)
+                + Text(movie.releaseText)
+                + Text(" · Duration: ").foregroundColor(.blue)
+                + Text(movie.durationText)
+            }.font(.subheadline)
+
+            Text("Synopsis:")
+                .font(.caption)
+                .padding(.top, 5)
+
             Text(movie.overview)
                 .foregroundColor(.blue)
+                .padding(.top, -8)
         }
-        .padding(.vertical)
-    }
-    
-    private var movieGenreYearDurationText: String {
-        "\(movie.genreText) · \(movie.releaseText) · \(movie.durationText)"
     }
     
     private var movieCastSection: some View {
@@ -148,45 +177,47 @@ struct MovieDetailListView: View {
             if let cast = movie.cast, !cast.isEmpty {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Starring:").font(.headline)
-                    ForEach(cast.prefix(9)) { Text($0.name)
-                        + Text(" as ") +
-                        Text("'\($0.character)'")
-                            .foregroundColor(.blue)
+                    ForEach(cast.prefix(9)) {
+                        Text($0.name).foregroundColor(.blue)
+                        + Text(" as ")
+                        + Text("\"")
+                        + Text("\($0.character)").foregroundColor(.blue)
+                        + Text("\"")
                     }
                 }
                 .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                
                 Spacer()
             }
             
-            if let crew = movie.crew, !crew.isEmpty {
+            if let crew = movie.crew, !crew.isEmpty, hasKeyCrewMembers(crew: crew) {
                 VStack(alignment: .leading, spacing: 4) {
                     if let directors = movie.directors, !directors.isEmpty {
                         Text("Director(s):").font(.headline)
-                        ForEach(directors.prefix(2)) { Text($0.name)
-                                .foregroundColor(.blue)
-                        }
+                        ForEach(directors.prefix(2)) { Text($0.name).foregroundColor(.blue) }
                     }
                     
                     if let producers = movie.producers, !producers.isEmpty {
-                        Text("Producer(s):").font(.headline)
-                            .padding(.top)
-                        ForEach(producers.prefix(2)) { Text($0.name)
-                                .foregroundColor(.blue)
-                        }
+                        Text("Producer(s):").font(.headline).padding(.top)
+                        ForEach(producers.prefix(2)) { Text($0.name).foregroundColor(.blue) }
                     }
                     
                     if let screenwriters = movie.screenWriters, !screenwriters.isEmpty {
-                        Text("Screenwriter(s):").font(.headline)
-                            .padding(.top)
-                        ForEach(screenwriters.prefix(2)) { Text($0.name)
-                                .foregroundColor(.blue)
-                        }
+                        Text("Screenwriter(s):").font(.headline).padding(.top)
+                        ForEach(screenwriters.prefix(2)) { Text($0.name).foregroundColor(.blue) }
                     }
                 }
                 .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
             }
         }
         .padding(.vertical)
+    }
+
+    private func hasKeyCrewMembers(crew: [MovieCrew]) -> Bool {
+        let directorsExist = movie.directors != nil && !movie.directors!.isEmpty
+        let producersExist = movie.producers != nil && !movie.producers!.isEmpty
+        let screenwritersExist = movie.screenWriters != nil && !movie.screenWriters!.isEmpty
+        return directorsExist || producersExist || screenwritersExist
     }
     
     @ViewBuilder
@@ -214,49 +245,17 @@ struct MovieDetailListView: View {
                                             .foregroundColor(Color(UIColor.systemIndigo))
                                     }
                                     Text(trailer.name)
-                                        .foregroundColor(.accentColor)
+                                        .foregroundColor(.blue)
                                         .font(.caption)
                                         .lineLimit(1)
                                         .frame(width: 120, alignment: .center)
                                 }
-                            }.padding(.vertical, 8)
+                            }
                         }
                     }
                 }
-            }.padding(.bottom)
-        }
-    }
-}
-
-struct MovieImagesView: View {
-    let movieImages: MovieImages
-    
-    var body: some View {
-        VStack {
-            Text("Backdrops")
-                .onAppear {
-                    print(movieImages) // Debugging line
-                }
-            ScrollView(.horizontal, showsIndicators: false) {
-                LazyHStack(spacing: 16) {
-                    ForEach(movieImages.backdrops ?? [], id: \.filePath) { imageDetail in 
-                        RemoteImage(url: imageDetail.imageURL, placeholder: nil)
-                            .frame(width: 120, height: 70)
-                            .clipped()
-                    }
-                }
             }
-            
-            Text("Posters")
-            ScrollView(.horizontal, showsIndicators: false) {
-                LazyHStack(spacing: 16) {
-                    ForEach(movieImages.posters ?? [], id: \.filePath) { imageDetail in 
-                        RemoteImage(url: imageDetail.imageURL, placeholder: nil)
-                            .frame(width: 120, height: 70)
-                            .clipped()
-                    }
-                }
-            }
+            .listRowSeparator(.hidden)
         }
     }
 }
@@ -264,8 +263,7 @@ struct MovieImagesView: View {
 struct MovieBackdropsView: View {
     let backdrops: [MovieImages.ImageDetail]
     @State private var currentIndex: Int = 0
-    @State private var timer: Timer? = nil
-    
+
     var body: some View {
         VStack {
             if let backdrop = backdrops[safe: currentIndex] {
@@ -274,24 +272,14 @@ struct MovieBackdropsView: View {
                     .clipped()
             }
         }.onAppear {
-            startTimer()
-        }.onDisappear {
-            stopTimer()
-        }
-    }
-    
-    func startTimer() {
-        timer?.invalidate()
-        timer = Timer.scheduledTimer(withTimeInterval: 2.0, repeats: true) { _ in
-            withAnimation {
-                currentIndex = (currentIndex + 1) % backdrops.count
+            SharedTimer.shared.startTimer {
+                withAnimation {
+                    currentIndex = (currentIndex + 1) % backdrops.count
+                }
             }
+        }.onDisappear {
+            SharedTimer.shared.stopTimer()
         }
-    }
-    
-    func stopTimer() {
-        timer?.invalidate()
-        timer = nil
     }
 }
 

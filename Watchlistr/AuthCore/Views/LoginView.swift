@@ -9,33 +9,32 @@ import SwiftUI
 import SwiftMessages
 
 struct LoginView: View {
+    @EnvironmentObject var auth: AuthViewModel
+    private let keychain = KeychainWrapper()
     @State private var email = ""
     @State private var password = ""
     @State private var isLoggingIn = false
-    @EnvironmentObject var vm: AuthViewModel
-    private let keychain = KeychainWrapper()
 
     var body: some View {
         NavigationView {
             ZStack {
-                backgroundImage
+                BackgroundImageView()
                 VStack {
-                    VStack(spacing: 8) {
+                    VStack {
                         welcomeMessage
-                        Image("Logo")
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: 100, height: 120)
-                    }.padding(.vertical, 50)
+                            .padding(.top, 100)
+                    }
+                    
+                    Spacer()
                     
                     VStack(spacing: 24) {
-                        InputView(
+                        AuthInputView(
                             text: $email,
                             title: "Email Address:",
                             placeholder: "enter your email"
                         ).autocapitalization(.none)
                         
-                        InputView(
+                        AuthInputView(
                             text: $password,
                             title: "Password:",
                             placeholder: "enter your password",
@@ -67,43 +66,45 @@ struct LoginView: View {
                     .padding(.horizontal)
                     .padding(.top, 22)
                     
-                    ButtonView(action: {
-                        isLoggingIn = true
-                        Task {
-                            do {
-                                try await vm.signIn(withEmail: email, password: password)
-                                let emailSaved = keychain.saveEmail(email: email)
-                                let passwordSaved = keychain.savePassword(password: password)
-                                
-                                if !emailSaved || !passwordSaved {
-                                    let view = MessageView.viewFromNib(layout: .cardView)
-                                    view.configureTheme(.error)
-                                    view.configureDropShadow()
-                                    view.configureContent(title: "Error", body: "Failed to save credentials. Please retry.")
-                                    SwiftMessages.show(view: view)
-                                }
-                            } catch {
-                                isLoggingIn = false
-                            }
-                            isLoggingIn = false
-                        }
-                    }, label: "Login", imageName: "arrow.right")
-                    .disabled(!formIsValid)
-                    .opacity(formIsValid && !isLoggingIn ? 1.0 : 0.5)
-                    .padding(.top, 24)
                     
                     if isLoggingIn {
                         ActivityIndicatorView()
-                        Text("Logging In...")
+                            .progressViewStyle(CircularProgressViewStyle())
                     }
                     
+                    ButtonView(action: {
+                        loginAction()
+                    }, label: "Login", imageName: "arrow.right")
+                    .disabled(!formIsValid || isLoggingIn)
+                    .opacity(formIsValid && !isLoggingIn ? 1.0 : 0.5)
+                    .padding(.top, 24)
+                    
                     Spacer()
+                    AppLogosByView()
+                        .padding(.bottom, 30)
                 }
             }
             .onAppear {
-                startImageTimer()
                 loadCredentialsFromKeychain()
             }
+        }
+    }
+    
+    private func loginAction() {
+        isLoggingIn = true
+        Task {
+            do {
+                try await auth.signIn(withEmail: email, password: password)
+                let emailSaved = keychain.saveEmail(email: email)
+                let passwordSaved = keychain.savePassword(password: password)
+                
+                if !emailSaved || !passwordSaved {
+                    showMessage(withTitle: "Error", message: "Failed to save credentials. Please retry.", theme: .error)
+                }
+            } catch {
+                showMessage(withTitle: "Error", message: "Failed to login: \(error.localizedDescription)", theme: .error)
+            }
+            isLoggingIn = false
         }
     }
     
@@ -120,43 +121,24 @@ struct LoginView: View {
         Text("Welcome to Watchlistr!")
             .font(.largeTitle)
     }
-    
-    private var backgroundImage: some View {
-        Image(backgroundImages[currentImageIndex])
-            .resizable()
-            .aspectRatio(contentMode: .fill)
-            .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-            .clipped()
-            .opacity(0.15)
-            .edgesIgnoringSafeArea(.all)
-    }
-    
-    private let backgroundImages = ["BackgroundView", "BackgroundView1", "BackgroundView2"]
-    @State private var currentImageIndex = 0
-    private let imageChangeInterval: TimeInterval = 10
-    
-    private func startImageTimer() {
-        _ = Timer.scheduledTimer(withTimeInterval: imageChangeInterval, repeats: true) { timer in
-            withAnimation {
-                currentImageIndex = (currentImageIndex + 1) % backgroundImages.count
-            }
-        }
-    }
 }
 
 extension LoginView: AuthFormProtocol {
     var formIsValid: Bool {
+        let emailPattern = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
+        let emailPredicate = NSPredicate(format:"SELF MATCHES %@", emailPattern)
         
-        return !email.isEmpty
-        && email.contains("@")
-        && email.contains(".")
-        && !password.isEmpty
-        && password.count > 5
+        return emailPredicate.evaluate(with: email)
+            && !password.isEmpty
+            && password.count >= 6
     }
 }
 
 struct LoginView_Previews: PreviewProvider {
     static var previews: some View {
         LoginView()
+            .environmentObject(AuthViewModel())
+            .environmentObject(WatchlistState())
+            .environmentObject(TabBarVisibilityManager())
     }
 }

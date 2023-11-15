@@ -14,9 +14,22 @@ class DateUtils {
         jsonDecoder.dateDecodingStrategy = .formatted(dateFormatter)
         return jsonDecoder
     }()
+    
     static let dateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-mm-dd"
+        dateFormatter.dateFormat = "yyyy-MM-dd"
         return dateFormatter
     }()
+    
+    static func convertTo12HourFormat(_ militaryTime: String) -> String? {
+        let timeFormatter = DateFormatter()
+        timeFormatter.dateFormat = "HH:mm"
+        
+        if let date = timeFormatter.date(from: militaryTime) {
+            timeFormatter.dateFormat = "h:mm a"
+            return timeFormatter.string(from: date)
+        } else {
+            return nil
+        }
+    }
 }

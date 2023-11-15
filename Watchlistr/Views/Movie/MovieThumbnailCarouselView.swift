@@ -8,33 +8,34 @@
 import SwiftUI
 
 struct MovieThumbnailCarouselView: View {
-    
+    @Environment(\.colorScheme) var colorScheme
     let title: String
     let movies: [Movie]
-    var thumbnailType : MovieThumbnailType = .poster()
-    
+    var thumbnailType: MovieThumbnailType = .poster()
+
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text(title)
-                .font(.title)
+                .font(.largeTitle)
                 .fontWeight(.bold)
                 .padding(.horizontal)
                 .foregroundColor(.blue)
-            
+                .shadow(radius: 3)
+
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(alignment: .top, spacing: 16) {
                     ForEach(self.movies) { movie in
-                        NavigationLink(destination: MovieDetailView(movieID: movie.id, movieTitle: movie.title)){
+                        NavigationLink(destination: MovieDetailView(movieID: movie.id, movieTitle: movie.title)) {
                             MovieThumbnailView(movie: movie, thumbnailType: thumbnailType)
                                 .movieThumbnailViewFrame(thumbnailType: thumbnailType)
-                        }
-                        .buttonStyle(.plain)
+                                .shadow(radius: 6)
+                        }.buttonStyle(.plain)
                     }
                 }
                 .padding(.horizontal)
                 .padding(.vertical, 8)
             }
-        }
+        }.background(LinearGradient(gradient: Gradient(colors: colorScheme == .dark ? [Color.black.opacity(0.7), Color.gray.opacity(0.3)] : [Color.gray.opacity(0.3), Color.black.opacity(0.7)]), startPoint: .top, endPoint: .bottom)).cornerRadius(15)
     }
 }
 
@@ -52,7 +53,6 @@ fileprivate extension View {
 }
 
 struct MoviePosterCarouselView_Previews: PreviewProvider {
-    
     static let stubbedMovies = Movie.stubbedMovies
     
     static var previews: some View {

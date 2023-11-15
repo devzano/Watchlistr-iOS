@@ -13,7 +13,6 @@ enum TVShowThumbnailType {
 }
 
 struct TVShowThumbnailView: View {
-    
     let tvShow: TVShow
     var thumbnailType: TVShowThumbnailType = .poster()
     @StateObject var imageLoader = ImageLoader()
