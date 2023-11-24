@@ -14,7 +14,9 @@ struct LoginView: View {
     @State private var email = ""
     @State private var password = ""
     @State private var isLoggingIn = false
-
+    @State private var primaryTextColor = ColorManager.shared.retrievePrimaryColor()
+    @State private var secondaryTextColor = ColorManager.shared.retrieveSecondaryColor()
+    
     var body: some View {
         NavigationView {
             ZStack {
@@ -59,7 +61,7 @@ struct LoginView: View {
                                 Text("Forgot Password?")
                                     .fontWeight(.bold)
                                     .font(.system(size: 14))
-                                    .foregroundColor(.blue)
+                                    .foregroundColor(secondaryTextColor)
                             }
                         }
                     }

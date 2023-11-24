@@ -16,6 +16,8 @@ struct ProfileTabView: View {
     @EnvironmentObject var watchlistState: WatchlistState
     @EnvironmentObject var tabBarVisibilityManager: TabBarVisibilityManager
     @StateObject private var imageLoader = ImageLoader()
+    @State private var selectedPrimaryTextColor: Color
+    @State private var selectedSecondaryTextColor: Color
     @State private var selectedImage: UIImage?
     @State private var isImagePickerPresented = false
     @State private var profileImageUrl: URL?
@@ -79,8 +81,16 @@ struct ProfileTabView: View {
     }
     
     init() {
-        UINavigationBar.appearance().largeTitleTextAttributes = [.foregroundColor: UIColor.systemBlue]
-        UINavigationBar.appearance().titleTextAttributes = [.foregroundColor: UIColor.systemIndigo]
+        let loadedColor = ColorManager.shared.retrievePrimaryColor()
+        _selectedPrimaryTextColor = State(initialValue: loadedColor)
+        let loadedSecondColor = ColorManager.shared.retrieveSecondaryColor()
+        _selectedSecondaryTextColor = State(initialValue: loadedSecondColor)
+        
+        let primaryColor = UIColor(loadedColor)
+        let secondaryColor = UIColor(loadedSecondColor)
+        
+        UINavigationBar.appearance().largeTitleTextAttributes = [.foregroundColor: secondaryColor]
+        UINavigationBar.appearance().titleTextAttributes = [.foregroundColor: primaryColor]
     }
 
     func requestPhotoLibraryPermission() {
@@ -124,14 +134,14 @@ struct ProfileTabView: View {
                                             .clipShape(Circle())
                                             .overlay(
                                                 Circle().stroke(
-                                                    LinearGradient(gradient: Gradient(colors: [.blue, .indigo]), startPoint: .leading, endPoint: .trailing),
+                                                    LinearGradient(gradient: Gradient(colors: [selectedSecondaryTextColor, selectedPrimaryTextColor]), startPoint: .leading, endPoint: .trailing),
                                                     lineWidth: 1.5
                                                 )
                                             )
                                             .shadow(radius: 4)
                                     } else {
                                         Circle()
-                                            .fill(LinearGradient(gradient: Gradient(colors: [.blue, .indigo]), startPoint: .topLeading, endPoint: .bottomTrailing))
+                                            .fill(LinearGradient(gradient: Gradient(colors: [selectedSecondaryTextColor, selectedPrimaryTextColor]), startPoint: .topLeading, endPoint: .bottomTrailing))
                                             .frame(width: 100, height: 100)
                                         Text(user.initials)
                                             .font(.system(size: 42, weight: .bold))
@@ -250,7 +260,7 @@ struct ProfileTabView: View {
                                     )
                                 }
                             }
-                        }.foregroundColor(.blue)
+                        }.foregroundColor(selectedSecondaryTextColor)
                         .listRowSeparator(.hidden)
                         
                         Section("General") {
@@ -290,6 +300,16 @@ struct ProfileTabView: View {
                                     .foregroundColor(.gray)
                             }
                             
+                            NavigationLink {
+                                ColorPickerView(selectedPrimaryTextColor: $selectedPrimaryTextColor, selectedSecondaryTextColor: $selectedSecondaryTextColor)
+                            } label: {
+                                SettingsRowView(
+                                    imageName: "paintpalette.fill",
+                                    title: "Change Text Colors",
+                                    tintColor: Color(.brown)
+                                )
+                            }
+                            
                             HStack {
                                 SettingsRowView(
                                     imageName: "gear",
@@ -303,7 +323,7 @@ struct ProfileTabView: View {
                                         .foregroundColor(.gray)
                                 }
                             }
-                        }.foregroundColor(.blue)
+                        }.foregroundColor(selectedSecondaryTextColor)
                         .listRowSeparator(.hidden)
                         
                         Section("Account") {
@@ -355,7 +375,7 @@ struct ProfileTabView: View {
                                     tintColor: .red
                                 )
                             }
-                        }.foregroundColor(.blue)
+                        }.foregroundColor(selectedSecondaryTextColor)
                         .listRowSeparator(.hidden)
                     }
 //                    .listRowInsets(.init(top: -5, leading: 12, bottom: -5, trailing: 12))

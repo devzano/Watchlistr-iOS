@@ -12,12 +12,17 @@ import Firebase
 struct WatchlistrApp: App {
     @StateObject var auth = AuthViewModel()
     @StateObject var watchlistState = WatchlistState()
+    @State private var primaryTextColor = ColorManager.shared.retrievePrimaryColor()
+    @State private var secondaryTextColor = ColorManager.shared.retrieveSecondaryColor()
     @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     var tabBarVisibilityManager = TabBarVisibilityManager()
     let deviceType = UIDevice().type
 
     init() {
-        UITabBar.appearance().unselectedItemTintColor = .systemIndigo
+        let loadedColor = ColorManager.shared.retrievePrimaryColor()
+        _primaryTextColor = State(initialValue: loadedColor)
+        let uiColor = UIColor(loadedColor)
+        UITabBar.appearance().unselectedItemTintColor = uiColor
     }
     
     var body: some Scene {
@@ -29,7 +34,7 @@ struct WatchlistrApp: App {
                 .environmentObject(auth)
                 .environmentObject(watchlistState)
                 .environmentObject(tabBarVisibilityManager)
-                .defaultTextColor()
+                .defaultTextColor(primaryTextColor)
                 .onReceive(NotificationCenter.default.publisher(for: .userDidLogOut)) { _ in
                     watchlistState.reset()
                 }

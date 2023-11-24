@@ -19,9 +19,5 @@
 	<string>alert</string>
 	<key>NSUserNotificationsUsageDescription</key>
 	<string>In order to send reminders, please allow Watchlistr to send you notifications.</string>
-	<key>UIBackgroundModes</key>
-	<array>
-		<string>audio</string>
-	</array>
 </dict>
 </plist>

@@ -13,7 +13,9 @@ struct MovieTabView: View {
     @StateObject var movieHomeState = MovieHomeState()
     @State private var isSearching = false
     @FocusState private var isSearchFieldFocused: Bool
-
+    @State private var primaryTextColor = ColorManager.shared.retrievePrimaryColor()
+    @State private var secondaryTextColor = ColorManager.shared.retrieveSecondaryColor()
+    
     var body: some View {
         NavigationView {
             mainContentView
@@ -56,6 +58,7 @@ struct MovieTabView: View {
             isSearchFieldFocused = true
         }) {
             Image(systemName: isSearching ? "film" : "magnifyingglass")
+                .foregroundColor(secondaryTextColor)
         }
     }
 }
@@ -130,6 +133,8 @@ struct MovieSearchView: View {
 }
 
 struct MovieRowView: View {
+    @State private var primaryTextColor = ColorManager.shared.retrievePrimaryColor()
+    @State private var secondaryTextColor = ColorManager.shared.retrieveSecondaryColor()
     let movie: Movie
     static let thumbnailSize: CGSize = CGSize(width: 61, height: 92)
 
@@ -146,14 +151,14 @@ struct MovieRowView: View {
         VStack(alignment: .leading) {
             Text(movie.title)
                 .font(.headline)
-                .foregroundColor(.blue)
+                .defaultTextColor(secondaryTextColor)
             if !movie.ratingText.isEmpty {
                 ratingAndReleaseView
             }
             Text(movie.overview)
                 .font(.subheadline)
                 .lineLimit(3)
-                .foregroundColor(.indigo)
+                .defaultTextColor(primaryTextColor)
         }
     }
     
@@ -162,7 +167,7 @@ struct MovieRowView: View {
             if !movie.releaseText.isEmpty {
                 Text(movie.releaseText)
                     .font(.subheadline)
-                    .foregroundColor(.white)
+                    .foregroundColor(.primary)
                     .padding(.horizontal, 10)
                     .padding(.vertical, 5)
                     .background(
@@ -170,7 +175,7 @@ struct MovieRowView: View {
                     )
                     .overlay(
                         RoundedRectangle(cornerRadius: 10)
-                            .stroke(LinearGradient(gradient: Gradient(colors: [.blue, .indigo]), startPoint: .leading, endPoint: .trailing), lineWidth: 2)
+                            .stroke(LinearGradient(gradient: Gradient(colors: [secondaryTextColor, primaryTextColor]), startPoint: .leading, endPoint: .trailing), lineWidth: 2)
                     )
                     .shadow(radius: 3)
             }
@@ -179,7 +184,7 @@ struct MovieRowView: View {
 
             Text(movie.ratingText)
                 .font(.system(size: 16, weight: .bold))
-                .foregroundColor(.white)
+                .foregroundColor(.primary)
                 .padding(.horizontal, 10)
                 .padding(.vertical, 5)
                 .background(
@@ -187,7 +192,7 @@ struct MovieRowView: View {
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: 10)
-                        .stroke(LinearGradient(gradient: Gradient(colors: [.blue, .indigo]), startPoint: .leading, endPoint: .trailing), lineWidth: 2)
+                        .stroke(LinearGradient(gradient: Gradient(colors: [secondaryTextColor, primaryTextColor]), startPoint: .leading, endPoint: .trailing), lineWidth: 2)
                 )
                 .shadow(radius: 3)
         }

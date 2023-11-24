@@ -16,6 +16,8 @@ struct SignupView: View {
     @State private var confPass = ""
     @State private var showPasswordRequirements = false
     @State private var isSigningUp = false
+    @State private var primaryTextColor = ColorManager.shared.retrievePrimaryColor()
+    @State private var secondaryTextColor = ColorManager.shared.retrieveSecondaryColor()
     
     var body: some View {
         ZStack {
@@ -34,11 +36,13 @@ struct SignupView: View {
                         title: "Username:",
                         placeholder: "username"
                     ).autocapitalization(.none)
+                    
                     AuthInputView(
                         text: $email,
                         title: "Email Address:",
                         placeholder: "name@example.com"
                     ).autocapitalization(.none)
+                    
                     ZStack(alignment: .trailing) {
                         AuthInputView(
                             text: $password,
@@ -50,7 +54,7 @@ struct SignupView: View {
                         if !showPasswordRequirements {
                             Image(systemName: "info.circle")
                                 .imageScale(.medium)
-                                .foregroundColor(.indigo)
+                                .foregroundColor(.red)
                                 .padding(.trailing, 8)
                                 .onTapGesture {
                                     showPasswordRequirements.toggle()
@@ -67,16 +71,16 @@ struct SignupView: View {
                                 ], id: \.self) { requirement in
                                     HStack(alignment: .center, spacing: 6) {
                                         RoundedRectangle(cornerRadius: 6)
-                                            .fill(Color.indigo)
+                                            .fill(primaryTextColor)
                                             .frame(width: 12, height: 12)
                                         Text(requirement)
                                             .font(.system(size: 14, weight: .medium))
-                                            .foregroundColor(.white)
+                                            .foregroundColor(.primary)
                                     }
                                 }
                             }
                             .padding(12)
-                            .background(Color.blue.opacity(0.2))
+                            .background(secondaryTextColor.opacity(0.2))
                             .cornerRadius(12)
                             .shadow(color: Color.black.opacity(0.3), radius: 8, x: 0, y: 4)
                             .onTapGesture {

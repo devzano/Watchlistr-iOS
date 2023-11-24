@@ -12,7 +12,7 @@ class MovieStore: MovieService {
     static let shared = MovieStore()
     private init() {}
 
-    private let apiKey = ["INSERT_API_KEY"]
+    private let apiKey = "\(Constants.tmdbAPIKey)"
     private let baseAPIURL = "https://api.themoviedb.org/3"
     private let urlSession = URLSession.shared
     private let jsonDecoder = DateUtils.jsonDecoder
@@ -40,7 +40,7 @@ class MovieStore: MovieService {
             "append_to_response": "videos,credits",
         ])
     }
-
+    
     func fetchMovieImages(id: Int) async throws -> MovieImages {
         guard let url = URL(string: "\(baseAPIURL)/movie/\(id)/images") else {
             throw MovieError.invalidEndpoint
@@ -49,7 +49,7 @@ class MovieStore: MovieService {
             "include_image_language": "en,null"
         ])
     }
-
+    
     func searchMovie(query: String) async throws -> [Movie] {
         guard let url = URL(string: "\(baseAPIURL)/search/movie") else {
             throw MovieError.invalidEndpoint
@@ -69,10 +69,10 @@ class MovieStore: MovieService {
         guard let url = URL(string: "\(baseAPIURL)/movie/\(movieID)/watch/providers") else {
             throw MovieError.invalidEndpoint
         }
-
+        
         return try await self.loadURLAndDecode(url: url)
     }
-
+    
     private func loadURLAndDecode<D: Decodable>(url: URL, params: [String: String]? = nil) async throws -> D {
         guard var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
             throw MovieError.invalidEndpoint
@@ -104,17 +104,17 @@ class MovieStore: MovieService {
 class TVShowStore: TVShowService {
     static let shared = TVShowStore()
     private init() {}
-
-    private let apiKey = ["INSERT_API_KEY"]
+    
+    private let apiKey = "\(Constants.tmdbAPIKey)"
     private let baseAPIURL = "https://api.themoviedb.org/3"
     private let urlSession = URLSession.shared
     private let jsonDecoder = DateUtils.jsonDecoder
-
+    
     func fetchTVShows(from endpoint: TVShowListEndpoint) async throws -> [TVShow] {
         guard let url = URL(string: "\(baseAPIURL)/discover/tv") else {
             throw TVShowError.invalidEndpoint
         }
-
+        
         var defaultParams = endpoint.params
         defaultParams["language"] = "en-US"
         defaultParams["with_original_language"] = "en"
@@ -128,12 +128,12 @@ class TVShowStore: TVShowService {
         guard let url = URL(string: "\(baseAPIURL)/tv/\(id)") else {
             throw TVShowError.invalidEndpoint
         }
-
+        
         return try await self.loadURLAndDecode(url: url, params: [
             "append_to_response": "videos,credits"
         ])
     }
-
+    
     func fetchTVShowSeriesImages(id: Int) async throws -> TVShowSeriesImages {
         guard let url = URL(string: "\(baseAPIURL)/tv/\(id)/images") else {
             throw TVShowError.invalidEndpoint
@@ -142,73 +142,73 @@ class TVShowStore: TVShowService {
             "include_image_language": "en,null"
         ])
     }
-
+    
     func searchTVShow(query: String) async throws -> [TVShow] {
         guard let url = URL(string: "\(baseAPIURL)/search/tv") else {
             throw TVShowError.invalidEndpoint
         }
-
+        
         let tvshowResponse: TVShowResponse = try await self.loadURLAndDecode(url: url, params: [
             "language": "en-US",
             "include_adult": "false",
             "query": query
         ])
-
+        
         return tvshowResponse.results
     }
-
+    
     func fetchSeasons(forTVShow tvShowID: Int) async throws -> [TVShowSeason] {
         guard let url = URL(string: "\(baseAPIURL)/tv/\(tvShowID)/season") else {
             throw TVShowError.invalidEndpoint
         }
         return try await self.loadURLAndDecode(url: url)
     }
-
+        
     func fetchEpisodes(forTVShow tvShowID: Int, seasonNumber: Int) async throws -> EpisodesResponse {
         guard let url = URL(string: "\(baseAPIURL)/tv/\(tvShowID)/season/\(seasonNumber)") else {
             throw TVShowError.invalidEndpoint
         }
         return try await self.loadURLAndDecode(url: url)
     }
-
+    
     func fetchExternalIDs(forSeries seriesID: Int) async throws -> TVShowExternalIDs {
         guard let url = URL(string: "\(baseAPIURL)/tv/\(seriesID)/external_ids") else {
             throw TVShowError.invalidEndpoint
         }
         return try await self.loadURLAndDecode(url: url)
     }
-
+    
     func fetchWatchProviders(forTVShow tvShowID: Int, wpSeason: Int) async throws -> WatchProvidersResponse {
         guard let url = URL(string: "\(baseAPIURL)/tv/\(tvShowID)/season/\(wpSeason)/watch/providers") else {
             throw TVShowError.invalidEndpoint
         }
-
+        
         return try await self.loadURLAndDecode(url: url)
     }
-
+    
     private func loadURLAndDecode<D: Decodable>(url: URL, params: [String: String]? = nil) async throws -> D {
         guard var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
             throw TVShowError.invalidEndpoint
         }
-
+        
         var queryItems = [URLQueryItem(name: "api_key", value: apiKey)]
-
+        
         if let params = params {
             queryItems.append(contentsOf: params.map { URLQueryItem(name: $0.key, value: $0.value) })
         }
-
+        
         urlComponents.queryItems = queryItems
-
+        
         guard let finalURL = urlComponents.url else {
             throw TVShowError.invalidEndpoint
         }
-
+        
         let (data, response) = try await urlSession.data(from: finalURL)
-
+        
         guard let httpResponse = response as? HTTPURLResponse, 200..<300 ~= httpResponse.statusCode else {
             throw TVShowError.invalidResponse
         }
-
+        
         return try self.jsonDecoder.decode(D.self, from: data)
     }
 }
@@ -220,11 +220,11 @@ class TVDBService: ObservableObject {
 
     func fetchTVDBToken(apiKey: String) async throws -> String {
         let url = URL(string: "\(baseURL)/login")!
-
+        
         let body = [
             "apikey": apiKey
         ]
-
+        
         let requestData = try! JSONEncoder().encode(body)
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -232,7 +232,7 @@ class TVDBService: ObservableObject {
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
 
         let (data, _) = try await URLSession.shared.data(for: request)
-
+        
         let response = try JSONDecoder().decode(TVDBResponse.self, from: data)
         self.jwtToken = response.data.token
         return response.data.token

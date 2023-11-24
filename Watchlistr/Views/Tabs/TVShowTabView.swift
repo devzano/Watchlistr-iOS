@@ -13,7 +13,9 @@ struct TVShowTabView: View {
     @StateObject var tvShowHomeState = TVShowHomeState()
     @State private var isSearching = false
     @FocusState private var isSearchFieldFocused: Bool
-
+    @State private var primaryTextColor = ColorManager.shared.retrievePrimaryColor()
+    @State private var secondaryTextColor = ColorManager.shared.retrieveSecondaryColor()
+    
     var body: some View {
         NavigationView {
             mainContentView
@@ -56,6 +58,7 @@ struct TVShowTabView: View {
             isSearchFieldFocused = true
         }) {
             Image(systemName: isSearching ? "tv" : "magnifyingglass")
+                .foregroundColor(secondaryTextColor)
         }
     }
 }
@@ -130,6 +133,8 @@ struct TVShowSearchView: View {
 }
 
 struct TVShowRowView: View {
+    @State private var primaryTextColor = ColorManager.shared.retrievePrimaryColor()
+    @State private var secondaryTextColor = ColorManager.shared.retrieveSecondaryColor()
     let tvShow: TVShow
     static let thumbnailSize: CGSize = CGSize(width: 61, height: 92)
 
@@ -146,14 +151,14 @@ struct TVShowRowView: View {
         VStack(alignment: .leading) {
             Text(tvShow.name)
                 .font(.headline)
-                .foregroundColor(.blue)
+                .foregroundColor(secondaryTextColor)
             if !tvShow.ratingText.isEmpty {
                 ratingAndAirView
             }
             Text(tvShow.overview)
                 .font(.subheadline)
                 .lineLimit(3)
-                .foregroundColor(.indigo)
+                .foregroundColor(primaryTextColor)
         }
     }
     
@@ -162,7 +167,7 @@ struct TVShowRowView: View {
             if !tvShow.airText.isEmpty {
                 Text(tvShow.airText)
                     .font(.subheadline)
-                    .foregroundColor(.white)
+                    .foregroundColor(.primary)
                     .padding(.horizontal, 10)
                     .padding(.vertical, 5)
                     .background(
@@ -170,7 +175,7 @@ struct TVShowRowView: View {
                     )
                     .overlay(
                         RoundedRectangle(cornerRadius: 10)
-                            .stroke(LinearGradient(gradient: Gradient(colors: [.blue, .indigo]), startPoint: .leading, endPoint: .trailing), lineWidth: 2)
+                            .stroke(LinearGradient(gradient: Gradient(colors: [secondaryTextColor, primaryTextColor]), startPoint: .leading, endPoint: .trailing), lineWidth: 2)
                     )
                     .shadow(radius: 3)
             }
@@ -179,7 +184,7 @@ struct TVShowRowView: View {
 
             Text(tvShow.ratingText)
                 .font(.system(size: 16, weight: .bold))
-                .foregroundColor(.white)
+                .foregroundColor(.primary)
                 .padding(.horizontal, 10)
                 .padding(.vertical, 5)
                 .background(
@@ -187,7 +192,7 @@ struct TVShowRowView: View {
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: 10)
-                        .stroke(LinearGradient(gradient: Gradient(colors: [.blue, .indigo]), startPoint: .leading, endPoint: .trailing), lineWidth: 2)
+                        .stroke(LinearGradient(gradient: Gradient(colors: [secondaryTextColor, primaryTextColor]), startPoint: .leading, endPoint: .trailing), lineWidth: 2)
                 )
                 .shadow(radius: 3)
         }

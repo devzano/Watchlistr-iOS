@@ -27,7 +27,7 @@ struct DateTimePickerView: View {
                         .buttonStyle(PlainButtonStyle())
                         .padding(.horizontal, 10)
                         .background(Color.red.opacity(0.8))
-                        .foregroundColor(.white)
+                        .foregroundColor(.primary)
                         .cornerRadius(8)
 
                         Button(action: {

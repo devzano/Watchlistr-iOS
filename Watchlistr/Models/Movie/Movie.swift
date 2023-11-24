@@ -12,7 +12,6 @@ struct MovieResponse: Decodable {
 }
 
 struct Movie: Decodable, Identifiable, Hashable {
-    
     static func == (lhs: Movie, rhs: Movie) -> Bool {
         lhs.id == rhs.id
     }
@@ -30,7 +29,6 @@ struct Movie: Decodable, Identifiable, Hashable {
     let voteCount: Int
     let runtime: Int?
     let releaseDate: String?
-    
     let genres: [MovieGenre]?
     let credits: MovieCredit?
     let videos: MovieVideoResponse?

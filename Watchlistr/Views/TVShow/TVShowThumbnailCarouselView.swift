@@ -12,6 +12,7 @@ struct TVShowThumbnailCarouselView: View {
     let name: String
     let tvShows: [TVShow]
     var thumbnailType : TVShowThumbnailType = .poster()
+    @State private var secondaryTextColor = ColorManager.shared.retrieveSecondaryColor()
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -19,7 +20,7 @@ struct TVShowThumbnailCarouselView: View {
                 .font(.largeTitle)
                 .fontWeight(.bold)
                 .padding(.horizontal)
-                .foregroundColor(.blue)
+                .defaultTextColor(secondaryTextColor)
                 .shadow(radius: 3)
             
             ScrollView(.horizontal, showsIndicators: false) {

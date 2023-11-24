@@ -5,67 +5,114 @@
 //  Created by Ruben Manzano on 11/11/23.
 //
 
+import Foundation
 import SwiftUI
+import UIKit
 
-//struct ColorPickerView: View {
-//    @EnvironmentObject var colorSettings: ColorSettings
-//
-//    var body: some View {
-//        VStack(spacing: 20) {
-//            ColorPicker("Choose A Color for your Primary Text", selection: $colorSettings.primaryColor)
-//                .foregroundColor(colorSettings.primaryColor)
-//                .padding()
-//                .background(RoundedRectangle(cornerRadius: 10)
-//                                .fill(Color(UIColor.secondarySystemBackground)))
-//                .shadow(radius: 3)
-//
-//            ColorPicker("Choose A Color for your Secondary Text", selection: $colorSettings.secondaryColor)
-//                .foregroundColor(colorSettings.secondaryColor)
-//                .padding()
-//                .background(RoundedRectangle(cornerRadius: 10)
-//                                .fill(Color(UIColor.secondarySystemBackground)))
-//                .shadow(radius: 3)
-//        }
-//        .padding()
-//        .navigationBarTitle("Customize Colors", displayMode: .inline)
-//    }
-//}
-//
-//struct ColorPickerView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        NavigationView {
-//            ColorPickerView().environmentObject(ColorSettings())
-//        }
-//    }
-//}
-//
-//class ColorSettings: ObservableObject {
-//    @Published var primaryColor: Color = .indigo {
-//        didSet { updateNavigationBarColors() }
-//    }
-//    @Published var secondaryColor: Color = .blue {
-//        didSet { updateNavigationBarColors() }
-//    }
-//
-//    private func updateNavigationBarColors() {
-//        UINavigationBar.appearance().largeTitleTextAttributes = [.foregroundColor: UIColor(primaryColor)]
-//        UINavigationBar.appearance().titleTextAttributes = [.foregroundColor: UIColor(secondaryColor)]
-//        
-//        UINavigationBar.appearance().tintColor = UIColor(secondaryColor)
-//    }
-//}
+extension UserDefaults {
+    func setColor(_ color: Color, forKey key: String) {
+        do {
+            let data = try NSKeyedArchiver.archivedData(withRootObject: UIColor(color), requiringSecureCoding: false)
+            set(data, forKey: key)
+        } catch {
+            print("Error archiving color: \(error.localizedDescription)")
+        }
+    }
+    
+    func color(forKey key: String) -> Color? {
+        guard let data = data(forKey: key) else { return nil }
+        do {
+            guard let uiColor = try NSKeyedUnarchiver.unarchivedObject(ofClass: UIColor.self, from: data) else { return nil }
+            return Color(uiColor)
+        } catch {
+            print("Error unarchiving color: \(error.localizedDescription)")
+            return nil
+        }
+    }
+}
+
+class ColorManager {
+    static let shared = ColorManager()
+    private let userDefaults = UserDefaults.standard
+
+    private let primaryColorKey = "userSelectedPrimaryColor"
+    private let secondaryColorKey = "userSelectedSecondaryColor"
+
+    func savePrimaryColor(_ color: Color) {
+        guard let colorData = color.toData() else { return }
+        userDefaults.set(colorData, forKey: primaryColorKey)
+    }
+
+    func retrievePrimaryColor() -> Color {
+        guard let colorData = userDefaults.data(forKey: primaryColorKey),
+              let color = Color(data: colorData) else {
+            return Color.blue
+        }
+        return color
+    }
+
+    func saveSecondaryColor(_ color: Color) {
+        guard let colorData = color.toData() else { return }
+        userDefaults.set(colorData, forKey: secondaryColorKey)
+    }
+
+    func retrieveSecondaryColor() -> Color {
+        guard let colorData = userDefaults.data(forKey: secondaryColorKey),
+              let color = Color(data: colorData) else {
+            return Color.indigo
+        }
+        return color
+    }
+}
+
+extension Color {
+    func toData() -> Data? {
+        UIColor(self).toData()
+    }
+
+    init?(data: Data) {
+        guard let uiColor = UIColor(data: data) else { return nil }
+        self.init(uiColor)
+    }
+}
+
+extension UIColor {
+    func toData() -> Data? {
+        try? NSKeyedArchiver.archivedData(withRootObject: self, requiringSecureCoding: false)
+    }
+
+    convenience init?(data: Data) {
+        if let color = try? NSKeyedUnarchiver.unarchivedObject(ofClass: UIColor.self, from: data) {
+            self.init(cgColor: color.cgColor)
+        } else {
+            return nil
+        }
+    }
+}
 
 struct DefaultTextColor: ViewModifier {
-//    @EnvironmentObject var colorSettings: ColorSettings
+    var color: Color
+
     func body(content: Content) -> some View {
         content
-            .foregroundColor(.indigo)
+            .foregroundColor(color)
     }
 }
 
 extension View {
-    func defaultTextColor() -> some View {
-        self.modifier(DefaultTextColor())
-//            .environmentObject(ColorSettings())
+    func defaultTextColor(_ color: Color) -> some View {
+        self.modifier(DefaultTextColor(color: color))
+    }
+}
+
+extension Binding {
+    func onChange(_ handler: @escaping (Value) -> Void) -> Binding<Value> {
+        Binding(
+            get: { self.wrappedValue },
+            set: { newValue in
+                self.wrappedValue = newValue
+                handler(newValue)
+            }
+        )
     }
 }

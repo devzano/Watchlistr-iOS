@@ -9,6 +9,8 @@ import Foundation
 import SwiftUI
 
 struct WatchlistMovieRowView: View {
+    @State private var primaryTextColor = ColorManager.shared.retrievePrimaryColor()
+        @State private var secondaryTextColor = ColorManager.shared.retrieveSecondaryColor()
     var movie: MovieWatchlist
     var isNotifiSet: Bool
 
@@ -25,7 +27,7 @@ struct WatchlistMovieRowView: View {
                     
                     Text(movie.overview)
                         .font(.subheadline)
-                        .foregroundColor(.blue)
+                        .foregroundColor(secondaryTextColor)
                         .lineLimit(3)
                 }
             }
@@ -37,7 +39,7 @@ struct WatchlistMovieRowView: View {
                         .font(.caption)
                         .padding(5)
                         .background(Color.blue.opacity(0.8))
-                        .foregroundColor(.white)
+                        .foregroundColor(.primary)
                         .cornerRadius(5)
                 }
                 
@@ -46,7 +48,7 @@ struct WatchlistMovieRowView: View {
                         .font(.caption)
                         .padding(5)
                         .background(Color.yellow.opacity(0.8))
-                        .foregroundColor(.white)
+                        .foregroundColor(.primary)
                         .cornerRadius(5)
                 }
             }

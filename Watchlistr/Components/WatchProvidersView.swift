@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct WatchProvidersView: View {
+    @State private var primaryTextColor = ColorManager.shared.retrievePrimaryColor()
+    @State private var secondaryTextColor = ColorManager.shared.retrieveSecondaryColor()
     let watchProviders: WatchProvidersResponse
     
     var combinedProviders: [Provider] {
@@ -45,7 +47,7 @@ struct WatchProvidersView: View {
                                 Link(destination: url) {
                                     ProviderLogoView(logoPath: provider.logoPath)
                                     Text(provider.providerName)
-                                        .foregroundColor(.blue)
+                                        .foregroundColor(secondaryTextColor)
                                 }
                             }
                         }
@@ -54,7 +56,7 @@ struct WatchProvidersView: View {
             } else {
                 Text("No streams available yet!")
                     .font(.headline)
-                    .foregroundColor(.blue)
+                    .foregroundColor(secondaryTextColor)
             }
         }
     }

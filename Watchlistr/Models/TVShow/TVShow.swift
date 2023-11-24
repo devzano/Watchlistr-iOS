@@ -144,12 +144,7 @@ struct TVShowSeason: Decodable, Identifiable {
     let name: String
     let overview: String
     let episodeCount: Int
-    let posterPath: String?
     let seasonNumber: Int
-    
-    var posterURL: URL {
-        return URL(string: "https://image.tmdb.org/t/p/w500\(posterPath ?? "")")!
-    }
 }
 
 struct TVShowExternalIDs: Decodable {

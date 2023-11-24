@@ -16,6 +16,8 @@ struct ChangePassView: View {
     @State private var confNewPass = ""
     @State private var showPasswordRequirements = false
     @State private var isChangingPassword = false
+    @State private var primaryTextColor = ColorManager.shared.retrievePrimaryColor()
+    @State private var secondaryTextColor = ColorManager.shared.retrieveSecondaryColor()
     
     var body: some View {
         ZStack {
@@ -41,7 +43,7 @@ struct ChangePassView: View {
                         if !showPasswordRequirements {
                             Image(systemName: "info.circle")
                                 .imageScale(.medium)
-                                .foregroundColor(.indigo)
+                                .foregroundColor(.red)
                                 .padding(.trailing, 8)
                                 .onTapGesture {
                                     showPasswordRequirements.toggle()
@@ -51,23 +53,23 @@ struct ChangePassView: View {
                         if showPasswordRequirements {
                             VStack(alignment: .leading, spacing: 8) {
                                 ForEach([
-                                    "• At least 6 characters",
-                                    "• A capital letter",
-                                    "• 1 number",
-                                    "• 1 special character"
+                                    "At least 6 characters",
+                                    "A capital letter",
+                                    "1 number",
+                                    "1 special character"
                                 ], id: \.self) { requirement in
                                     HStack(alignment: .center, spacing: 6) {
                                         RoundedRectangle(cornerRadius: 6)
-                                            .fill(Color.indigo)
+                                            .fill(primaryTextColor)
                                             .frame(width: 12, height: 12)
                                         Text(requirement)
                                             .font(.system(size: 14, weight: .medium))
-                                            .foregroundColor(.white)
+                                            .foregroundColor(.primary)
                                     }
                                 }
                             }
                             .padding(12)
-                            .background(Color.blue.opacity(0.2))
+                            .background(secondaryTextColor.opacity(0.2))
                             .cornerRadius(12)
                             .shadow(color: Color.black.opacity(0.3), radius: 8, x: 0, y: 4)
                             .onTapGesture {

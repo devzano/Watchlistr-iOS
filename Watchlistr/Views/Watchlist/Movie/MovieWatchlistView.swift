@@ -28,7 +28,9 @@ struct MovieWatchlistView: View {
     @State private var scheduledNotifications: [UNNotificationRequest] = []
     @State private var sortOrder = MovieSortOptions()
     @State private var sortHasPriority: Bool = true
-
+    @State private var primaryTextColor = ColorManager.shared.retrievePrimaryColor()
+    @State private var secondaryTextColor = ColorManager.shared.retrieveSecondaryColor()
+    
     var filteredMovies: [MovieWatchlist] {
         if searchQuery.isEmpty {
             return watchlistState.mWatchlist
@@ -167,7 +169,7 @@ struct MovieWatchlistView: View {
                                             .buttonStyle(PlainButtonStyle())
                                             .padding(.horizontal, 10)
                                             .background(Color.red.opacity(0.8))
-                                            .foregroundColor(.white)
+                                            .foregroundColor(.primary)
                                             .cornerRadius(8)
                                             
                                             Button(action: {
@@ -181,7 +183,7 @@ struct MovieWatchlistView: View {
                                             .buttonStyle(PlainButtonStyle())
                                             .padding(.horizontal, 10)
                                             .background(Color.yellow.opacity(0.8))
-                                            .foregroundColor(.white)
+                                            .foregroundColor(.primary)
                                             .cornerRadius(8)
                                         }
                                     }
@@ -248,7 +250,7 @@ struct MovieWatchlistView: View {
                 Label("Sort by Reminded", systemImage: sortImageName)
             }
         } label: {
-            Image(systemName: "ellipsis.circle").foregroundColor(.blue)
+            Image(systemName: "ellipsis.circle").foregroundColor(secondaryTextColor)
         }.buttonStyle(.borderless))
         .navigationTitle("Watchlist")
         .navigationBarTitleDisplayMode(.inline)

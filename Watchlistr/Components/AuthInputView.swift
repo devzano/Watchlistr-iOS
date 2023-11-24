@@ -12,11 +12,13 @@ struct AuthInputView: View {
     let title: String
     let placeholder: String
     var isSecureField = false
+    @State private var primaryTextColor = ColorManager.shared.retrievePrimaryColor()
+    @State private var secondaryTextColor = ColorManager.shared.retrieveSecondaryColor()
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text(title)
-                .foregroundColor(.accentColor)
+                .foregroundColor(secondaryTextColor)
                 .fontWeight(.semibold)
                 .font(.footnote)
             

@@ -8,13 +8,23 @@
 import SwiftUI
 
 struct ActivityIndicatorView: UIViewRepresentable {
+    let primaryTextColor: UIColor
+    let secondaryTextColor: UIColor
     
-    func updateUIView(_ uiView: UIActivityIndicatorView, context: Context) { }
-    
+    init() {
+        primaryTextColor = UIColor(ColorManager.shared.retrievePrimaryColor())
+        secondaryTextColor = UIColor(ColorManager.shared.retrieveSecondaryColor())
+    }
+
     func makeUIView(context: Context) -> UIActivityIndicatorView {
-        let view = UIActivityIndicatorView(style: .large)
-        view.startAnimating()
-        view.color = UIColor.systemBlue
-        return view
+        let activityIndicator = UIActivityIndicatorView(style: .large)
+        activityIndicator.startAnimating()
+        activityIndicator.color = secondaryTextColor
+        return activityIndicator
+    }
+
+    func updateUIView(_ uiView: UIActivityIndicatorView, context: Context) {
+        uiView.color = secondaryTextColor
     }
 }
+

@@ -33,7 +33,9 @@ struct ScheduledNotificationsView: View {
     @State private var oldNotifications: [UNNotificationRequest] = []
     @State private var deliveredNotifications: [UNNotification] = []
     @State private var isSortedByDate: Bool = false
-
+    @State private var primaryTextColor = ColorManager.shared.retrievePrimaryColor()
+    @State private var secondaryTextColor = ColorManager.shared.retrieveSecondaryColor()
+        
     var username: String
     
     var body: some View {
@@ -81,6 +83,7 @@ struct ScheduledNotificationsView: View {
             loadNotifications()
         }) {
             Image(systemName: isSortedByDate ? "calendar" : "calendar.badge.plus")
+                .foregroundColor(secondaryTextColor)
         })
         .navigationTitle("Notifications")
         .navigationBarTitleDisplayMode(.inline)
@@ -147,6 +150,8 @@ struct NotificationRow: View {
     let formatter: DateFormatter
     let deleteNotification: (String) -> Void
     let loadNotifications: () -> Void
+    @State private var primaryTextColor = ColorManager.shared.retrievePrimaryColor()
+    @State private var secondaryTextColor = ColorManager.shared.retrieveSecondaryColor()
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -158,16 +163,16 @@ struct NotificationRow: View {
                    let fireDate = trigger.nextTriggerDate() {
                     Text("\(formatter.string(from: fireDate))")
                         .font(.footnote)
-                        .foregroundColor(.blue)
+                        .foregroundColor(secondaryTextColor)
                     +
                     Text(" (\(timeLeft(for: notification)))")
                         .font(.footnote)
-                        .foregroundColor(.indigo)
+                        .foregroundColor(primaryTextColor)
                 }
             }
             Text(notification.content.body)
                 .font(.subheadline)
-                .foregroundColor(.secondary)
+                .foregroundColor(secondaryTextColor)
         }
         .swipeActions {
             Button(role: .destructive) {
@@ -212,6 +217,8 @@ struct DeliveredNotificationRow: View {
     let formatter: DateFormatter
     let deleteNotification: (String) -> Void
     let loadNotifications: () -> Void
+    @State private var primaryTextColor = ColorManager.shared.retrievePrimaryColor()
+    @State private var secondaryTextColor = ColorManager.shared.retrieveSecondaryColor()
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -221,11 +228,11 @@ struct DeliveredNotificationRow: View {
                 Spacer()
                 Text(formatter.string(from: notification.date))
                     .font(.footnote)
-                    .foregroundColor(.blue)
+                    .foregroundColor(secondaryTextColor)
             }
             Text(notification.request.content.body)
                 .font(.subheadline)
-                .foregroundColor(.secondary)
+                .foregroundColor(primaryTextColor)
         }
         .swipeActions {
             Button(role: .destructive) {

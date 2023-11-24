@@ -11,22 +11,24 @@ struct ButtonView: View {
     var action: () -> Void
     var label: String
     var imageName: String?
-    
+    @State private var secondaryTextColor = ColorManager.shared.retrieveSecondaryColor()
+
     var body: some View {
         Button(action: action) {
             HStack {
                 Text(label)
                     .fontWeight(.semibold)
-                    .foregroundColor(.white)
+                    .foregroundColor(.primary)
                 if let imageName = imageName {
                     Image(systemName: imageName)
+                        .foregroundColor(.primary)
                 }
             }
         }
-        .foregroundColor(.white)
+        .foregroundColor(.primary)
         .padding(.horizontal, 16)
         .frame(height: 48)
-        .background(Color(.systemBlue))
+        .background(secondaryTextColor)
         .cornerRadius(10)
     }
 }

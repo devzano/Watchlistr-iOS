@@ -14,7 +14,9 @@ struct ContentView: View {
     @State private var movieTabView = MovieTabView()
     @State private var profileTabView = ProfileTabView()
     @State private var tvShowTabView = TVShowTabView()
-
+    @State private var primaryTextColor = ColorManager.shared.retrievePrimaryColor()
+    @State private var secondaryTextColor = ColorManager.shared.retrieveSecondaryColor()
+    
     var body: some View {
         Group {
             if auth.userSession != nil {
@@ -42,12 +44,11 @@ struct ContentView: View {
                             }
                         }
                         .tag(2)
-                }
+                }.accentColor(secondaryTextColor)
             } else {
                 LoginView()
             }
-        }
-        .navigationViewStyle(StackNavigationViewStyle())
+        }.navigationViewStyle(StackNavigationViewStyle())
     }
 }
 

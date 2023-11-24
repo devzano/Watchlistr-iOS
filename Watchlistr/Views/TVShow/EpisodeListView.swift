@@ -21,6 +21,11 @@ struct EpisodesListView: View {
     @State private var episodesWithReminders: Set<Int> = []
     @State private var scheduledNotifications: [UNNotificationRequest] = []
     @State private var showingActionSheetForEpisodeID: Int? = nil
+    @State private var embedURL: URL?
+    @State private var episodeSources: [Int: [EpisodeSource]] = [:] //
+    @State private var primaryTextColor = ColorManager.shared.retrievePrimaryColor()
+    @State private var secondaryTextColor = ColorManager.shared.retrieveSecondaryColor()
+        
     let tvShowID: Int
     let tvShowName: String
     let season: TVShowSeason
@@ -33,7 +38,7 @@ struct EpisodesListView: View {
                 Spacer()
                 Text(episode.name)
                     .font(.headline)
-                    .foregroundColor(.indigo)
+                    .foregroundColor(secondaryTextColor)
 
                 ZStack(alignment: Alignment(horizontal: .center, vertical: .center)) {
                     RemoteImage(url: episode.stillURL, placeholder: Image("ImageNotFound"))
@@ -47,7 +52,7 @@ struct EpisodesListView: View {
                                 .font(.caption)
                                 .padding(5)
                                 .background(Color.blue.opacity(0.8))
-                                .foregroundColor(.white)
+                                .foregroundColor(.primary)
                                 .cornerRadius(5)
                         }
                         
@@ -56,7 +61,7 @@ struct EpisodesListView: View {
                                 .font(.caption)
                                 .padding(5)
                                 .background(Color.yellow.opacity(0.8))
-                                .foregroundColor(.white)
+                                .foregroundColor(.primary)
                                 .cornerRadius(5)
                         }
                     }
@@ -64,19 +69,21 @@ struct EpisodesListView: View {
                 }
 
                 VStack(alignment: .leading) {
-                    Text(episode.airText)
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                    
-                    if let airsTime = airsTime, let airsDays = airsDays {
-                        let formattedTime = DateUtils.convertTo12HourFormat(airsTime) ?? airsTime
-                        Text("Airs on \(airsDays.joined(separator: ", ")) at: \(formattedTime)")
-                            .font(.footnote)
-                            .foregroundColor(.blue)
+                    HStack {
+                        if let airsTime = airsTime, let airsDays = airsDays {
+                            let formattedTime = DateUtils.convertTo12HourFormat(airsTime) ?? airsTime
+                            Text(isEpisodeAlreadyAired(episode: episode, airsTime: airsTime) ? "Aired \(airsDays.joined(separator: ", ")) at: \(formattedTime)" : "Airs on \(airsDays.joined(separator: ", ")) at: \(formattedTime)")
+                                .font(.footnote)
+                                .foregroundColor(secondaryTextColor.opacity(0.7))
+                        }
+                        Spacer()
+                        Text(episode.airText)
+                            .font(.subheadline)
+                            .foregroundColor(primaryTextColor)
                     }
                     
                     Text(episode.overview)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(primaryTextColor.opacity(0.5))
                 }
                 
                 HStack {
@@ -86,13 +93,32 @@ struct EpisodesListView: View {
                         HStack {
                             Image(systemName: watchlistState.isEpisodeWatched(tvShowID: tvShowID, seasonNumber: season.seasonNumber, episodeID: episode.id) ? "checkmark.circle.fill" : "circle")
                             Text(watchlistState.isEpisodeWatched(tvShowID: tvShowID, seasonNumber: season.seasonNumber, episodeID: episode.id) ? "Watched!" : "Watched")
-                                .foregroundColor(.primary)
                         }
+                        .foregroundColor(.primary)
                         .padding(5)
-                        .background(Color.green.opacity(0.7))
+                        .background(Color.blue.opacity(0.7))
                         .cornerRadius(5)
+                    }.buttonStyle(.borderless)
+                    
+                    //
+                    Spacer()
+                    Menu {
+                        ForEach(episodeSources[episode.id] ?? [], id: \.url) { source in
+                            Button(action: {
+                                embedURL = source.url
+                            }) {
+                                Text(source.name)
+                                Image(systemName: "tv")
+                            }
+                        }
+                    } label: {
+                        Label("Play", systemImage: "play.circle")
                     }
-                    .buttonStyle(.borderless)
+                    .foregroundColor(.primary)
+                    .padding(5)
+                    .background(Color.green.opacity(0.7))
+                    .cornerRadius(5)
+                    
                     Spacer()
                     
                     Button(action: {
@@ -108,8 +134,8 @@ struct EpisodesListView: View {
                         HStack {
                             Image(systemName: "bell")
                             Text(isNotificationSetForEpisode(episode.id) ? "Reminded!" : "Remind Me")
-                                .foregroundColor(.primary)
                         }
+                        .foregroundColor(.primary)
                         .padding(5)
                         .background(Color.yellow.opacity(0.7))
                         .cornerRadius(5)
@@ -136,7 +162,7 @@ struct EpisodesListView: View {
                 .frame(maxWidth: .infinity)
                 .padding(.top, 8)
             }
-            .listRowSeparator(.hidden)
+//            .listRowSeparator(.hidden)
             .overlay(
                 Group {
                     if showingDatePickers[episode.id] ?? false {
@@ -150,9 +176,9 @@ struct EpisodesListView: View {
                                 .buttonStyle(PlainButtonStyle())
                                 .padding(.horizontal, 10)
                                 .background(Color.red.opacity(0.8))
-                                .foregroundColor(.white)
+                                .foregroundColor(.primary)
                                 .cornerRadius(8)
-
+                                
                                 Button("Set") {
                                     if let currentUser = auth.currentUser {
                                         scheduleCustomNotification(for: episode, at: setNotifi, username: currentUser.username) {
@@ -177,6 +203,7 @@ struct EpisodesListView: View {
                 }
             )
         }
+        .sheet(item: $embedURL) { SafariView(url: $0).edgesIgnoringSafeArea(.bottom) }
         .navigationTitle("Episodes list for \(season.name)")
         .navigationBarItems(trailing: Button(action: {
                 markAllEpisodesAsWatched()
@@ -188,6 +215,40 @@ struct EpisodesListView: View {
             loadEpisodes()
             loadScheduledNotifications()
         }
+    }
+    
+    //
+    private func getVIDSRCEpisodeEmbedURL(for episode: TVShowEpisode) -> URL? {
+        let baseURL = "https://vidsrc.xyz/embed/tv"
+        let showIdentifier = "\(tvShowID)"
+        let seasonNumber = episode.seasonNumber
+        let episodeNumber = episode.episodeNumber
+        
+        var components = URLComponents(string: baseURL)
+        components?.queryItems = [
+            URLQueryItem(name: "tmdb", value: showIdentifier),
+            URLQueryItem(name: "season", value: "\(seasonNumber)"),
+            URLQueryItem(name: "episode", value: "\(episodeNumber)")
+        ]
+        
+        return components?.url
+    }
+    //
+    private func getSuperEmbedEpisodeEmbedURL(for episode: TVShowEpisode) -> URL? {
+        let baseURL = "https://multiembed.mov/"
+        let showIdentifier = "\(tvShowID)"
+        let seasonNumber = episode.seasonNumber
+        let episodeNumber = episode.episodeNumber
+        
+        var components = URLComponents(string: baseURL)
+        components?.queryItems = [
+            URLQueryItem(name: "video_id", value: showIdentifier),
+            URLQueryItem(name: "tmdb", value: "1"),
+            URLQueryItem(name: "s", value: "\(seasonNumber)"),
+            URLQueryItem(name: "e", value: "\(episodeNumber)")
+        ]
+        
+        return components?.url
     }
     
     private func markAllEpisodesAsWatched() {
@@ -334,11 +395,29 @@ struct EpisodesListView: View {
                 let episodesResponse = try await TVShowStore.shared.fetchEpisodes(forTVShow: tvShowID, seasonNumber: season.seasonNumber)
                 self.episodes = episodesResponse.episodes
                 allWatched = episodes.allSatisfy { watchlistState.isEpisodeWatched(tvShowID: tvShowID, seasonNumber: season.seasonNumber, episodeID: $0.id) }
+                //
+                episodes.forEach { episode in
+                    var sources: [EpisodeSource] = []
+                    if let vidsrcURL = getVIDSRCEpisodeEmbedURL(for: episode) {
+                        sources.append(EpisodeSource(name: "VIDSRC", url: vidsrcURL))
+                    }
+                    if let superEmbedURL = getSuperEmbedEpisodeEmbedURL(for: episode) {
+                        sources.append(EpisodeSource(name: "SuperEmbed", url: superEmbedURL))
+                    }
+                    episodeSources[episode.id] = sources
+                }
             } catch {
                 showError(message: "Error loading episodes: \(error)")
             }
         }
     }
+
+}
+
+//
+struct EpisodeSource {
+    let name: String
+    let url: URL
 }
 
 struct EpisodesListView_Previews: PreviewProvider {
@@ -363,7 +442,6 @@ struct EpisodesListView_Previews: PreviewProvider {
             name: "Season 1",
             overview: "A mock overview for Season 1 of Breaking Bad.",
             episodeCount: 10,
-            posterPath: nil,
             seasonNumber: 1
         )
     }

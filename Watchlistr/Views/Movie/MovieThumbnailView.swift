@@ -63,7 +63,7 @@ struct MovieThumbnailView: View {
                 Image(systemName: "photo")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .foregroundColor(.white)
+                    .foregroundColor(.primary)
             }
         }
         .cornerRadius(8)

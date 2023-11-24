@@ -12,14 +12,15 @@ struct MovieThumbnailCarouselView: View {
     let title: String
     let movies: [Movie]
     var thumbnailType: MovieThumbnailType = .poster()
-
+    @State private var secondaryTextColor = ColorManager.shared.retrieveSecondaryColor()
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text(title)
                 .font(.largeTitle)
                 .fontWeight(.bold)
                 .padding(.horizontal)
-                .foregroundColor(.blue)
+                .defaultTextColor(secondaryTextColor)
                 .shadow(radius: 3)
 
             ScrollView(.horizontal, showsIndicators: false) {

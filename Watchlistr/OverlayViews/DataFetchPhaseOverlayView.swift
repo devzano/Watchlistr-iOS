@@ -23,10 +23,14 @@ struct DataFetchPhaseOverlayView<V: EmptyData>: View {
             EmptyPlaceholderView(text: "No Data", image: Image(systemName: "film"))
         case .failure(let error):
             RetryView(text: error.localizedDescription, retryAction: retryAction)
+                .onAppear {
+                    print("Error phase: \(error.localizedDescription)")
+                }
         default:
             EmptyView()
         }
     }
+
 }
 
 extension Array: EmptyData {}
