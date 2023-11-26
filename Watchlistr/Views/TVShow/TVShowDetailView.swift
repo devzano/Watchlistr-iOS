@@ -386,6 +386,8 @@ struct TVShowDetailView_Previews: PreviewProvider {
                 tvShowName: "Breaking Bad"
             )
             .environmentObject(WatchlistState())
+            .environmentObject(AuthViewModel())
+            .environmentObject(TabBarVisibilityManager())
         }
     }
 }

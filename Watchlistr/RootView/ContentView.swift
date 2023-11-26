@@ -20,35 +20,22 @@ struct ContentView: View {
     var body: some View {
         Group {
             if auth.userSession != nil {
-                TabView(selection: $selectedTab) {
-                    movieTabView
-                        .tabItem {
-                            if !tabBarVisibilityManager.isTabBarHidden {
-                                Label("Movies", systemImage: "film")
-                            }
-                        }
-                        .tag(0)
-
-                    profileTabView
-                        .tabItem {
-                            if !tabBarVisibilityManager.isTabBarHidden {
-                                Label("Profile", systemImage: "person.circle")
-                            }
-                        }
-                        .tag(1)
-
-                    tvShowTabView
-                        .tabItem {
-                            if !tabBarVisibilityManager.isTabBarHidden {
-                                Label("TV Shows", systemImage: "tv")
-                            }
-                        }
-                        .tag(2)
-                }.accentColor(secondaryTextColor)
+                VStack {
+                    if selectedTab == 0 {
+                        movieTabView
+                    } else if selectedTab == 1 {
+                        profileTabView
+                    } else if selectedTab == 2 {
+                        tvShowTabView
+                    }
+                    
+                    TabBarView(selectedTab: $selectedTab).accentColor(secondaryTextColor)
+                }
             } else {
                 LoginView()
             }
-        }.navigationViewStyle(StackNavigationViewStyle())
+        }.accentColor(secondaryTextColor)
+        .navigationViewStyle(StackNavigationViewStyle())
     }
 }
 

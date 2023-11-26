@@ -34,6 +34,7 @@ struct ProfileTabView: View {
                 if let document = document, document.exists {
                     let data = document.data()
                     if let imageUrlString = data?["profileImageUrl"] as? String, let url = URL(string: imageUrlString) {
+                        UserDefaults.standard.set(url, forKey: "profileImageUrl")
                         self.imageLoader.loadImage(with: url)
                     }
                 } else {
@@ -395,7 +396,13 @@ struct ProfileTabView: View {
                     Text("Fetching Profile")
                     ActivityIndicatorView()
                         .scaledToFit()
-                }.onAppear {
+                }
+            }
+        }.onAppear {
+            if imageLoader.image == nil {
+                if let savedProfileImageUrl = UserDefaults.standard.url(forKey: "profileImageUrl") {
+                    imageLoader.loadImage(with: savedProfileImageUrl)
+                } else {
                     fetchUserProfileImage()
                 }
             }

@@ -83,4 +83,3 @@ struct MoviePosterCard_Previews: PreviewProvider {
         }
     }
 }
-

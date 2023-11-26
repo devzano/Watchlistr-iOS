@@ -7,6 +7,30 @@
 
 import SwiftUI
 import Firebase
+import GoogleMobileAds
+
+class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
+    func application(_ application: UIApplication,
+                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+        FirebaseApp.configure()
+        
+        let center = UNUserNotificationCenter.current()
+        center.delegate = self
+        
+        GADMobileAds.sharedInstance().start(completionHandler: nil)
+        GADMobileAds.sharedInstance().requestConfiguration.testDeviceIdentifiers = [
+            "9279d05aaca0f38b5740572b17ae0ace", //iPhone 15
+            "6ee504ee7750aea70ad6ef10a5ec09e5", //iPhone 12
+            "7d4ebd112238d3f9cdd89764347d8e48"  //iPad Air 2
+        ]
+        
+        return true
+    }
+    
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([.banner, .sound])
+    }
+}
 
 @main
 struct WatchlistrApp: App {
@@ -41,24 +65,6 @@ struct WatchlistrApp: App {
                 .onReceive(NotificationCenter.default.publisher(for: .userDidLogIn)) { _ in
                     watchlistState.fetchWatchlist()
                 }
-        }
-    }
-}
-
-extension WatchlistrApp {
-    final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
-        func application(_ application: UIApplication,
-                         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-            FirebaseApp.configure()
-            
-            let center = UNUserNotificationCenter.current()
-            center.delegate = self
-            
-            return true
-        }
-        
-        func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-            completionHandler([.banner, .sound])
         }
     }
 }

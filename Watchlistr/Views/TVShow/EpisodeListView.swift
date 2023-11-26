@@ -129,6 +129,18 @@ struct EpisodesListView: View {
                             } else {
                                 self.showingActionSheetForEpisodeID = episode.id
                             }
+                            requestNotificationPermission { granted in
+                                if granted {
+                                    if isEpisodeAlreadyAired(episode: episode, airsTime: airsTime) {
+                                        self.scheduleNotification(for: episode, username: auth.currentUser?.username ?? "default")
+                                    }
+                                } else {
+                                    DispatchQueue.main.async {
+                                        showError(withTitle: "Permission Denied",
+                                                  message: "To enable notifications for Watchlistr, please navigate to your device's settings and grant permission.", duration: 5.0)
+                                    }
+                                }
+                            }
                         }
                     }) {
                         HStack {
@@ -178,12 +190,27 @@ struct EpisodesListView: View {
                                 .background(Color.red.opacity(0.8))
                                 .foregroundColor(.primary)
                                 .cornerRadius(8)
-                                
+
                                 Button("Set") {
-                                    if let currentUser = auth.currentUser {
-                                        scheduleCustomNotification(for: episode, at: setNotifi, username: currentUser.username) {
-                                            self.loadScheduledNotifications()
-                                            self.showingDatePickers[episode.id] = false
+                                    if !isNotificationSetForEpisode(episode.id) {
+                                        if isEpisodeAlreadyAired(episode: episode, airsTime: airsTime) {
+                                            requestNotificationPermission { granted in
+                                                if granted {
+                                                    if let currentUser = auth.currentUser {
+                                                        scheduleCustomNotification(for: episode, at: setNotifi, username: currentUser.username) {
+                                                            self.loadScheduledNotifications()
+                                                            self.showingDatePickers[episode.id] = false
+                                                        }
+                                                    }
+                                                } else {
+                                                    DispatchQueue.main.async {
+                                                        showError(withTitle: "Permission Denied",
+                                                                  message: "To enable notifications for Watchlistr, please navigate to your device's settings and grant permission.", duration: 5.0)
+                                                    }
+                                                }
+                                            }
+                                        } else {
+                                            self.showingActionSheetForEpisodeID = episode.id
                                         }
                                     }
                                 }
@@ -199,7 +226,6 @@ struct EpisodesListView: View {
                         .cornerRadius(10)
                         .shadow(radius: 10)
                     }
-
                 }
             )
         }
