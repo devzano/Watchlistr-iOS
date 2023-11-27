@@ -52,4 +52,4 @@ Copyright © 2023 devzano. All rights reserved.
 <br>
 <small><a href="https://developer.themoviedb.org/docs">TMDB</a></small>
 <br>
-<small><a href="https://www.justwatch.com/">JustWatch</a></small>
+<small><a href="https://www.thetvdb.com/">TVDB</a></small>
